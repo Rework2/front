@@ -25,7 +25,7 @@ import { TimelineHeader } from "../components/roadmappage/TimelineHeader";
 import { TimelineRow } from "../components/roadmappage/TimelineRow";
 
 // 아이콘 컴포넌트들 (임시 구현)
-// 실제로는 react-icons 등에서 import해야 할 수 있습니다
+// 실제로는 react-icons 등에서 import할 것
 const X = () => <span>×</span>;
 const Plus = () => <span>+</span>;
 const Calendar = () => <span>📅</span>;
@@ -40,7 +40,7 @@ function RoadmapPage() {
   // 선택된 연도 상태
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   // 활동 유형 목록 상태
-  const [activityTypes, setActivityTypes] = useState(DEFAULT_ACTIVITY_TYPES);
+  const [activityTypes, setActivityTypes] = useState(DEFAULT_ACTIVITY_TYPES); //AI로 받는다면??
   // 선택된 활동 유형 ID 목록 상태
   const [selectedActivityTypes, setSelectedActivityTypes] = useState(
     DEFAULT_ACTIVITY_TYPES.map((type) => type.id)
@@ -48,7 +48,7 @@ function RoadmapPage() {
   // 활동 목록 상태
   const [activities, setActivities] = useState(DEFAULT_ACTIVITIES);
   // 월 범위 상태 (시작월, 종료월)
-  const [monthRange, setMonthRange] = useState({ start: 8, end: 11 });
+  const [monthRange, setMonthRange] = useState({ start: 1, end: 12 });
   // 선택된 태그 목록 상태
   const [selectedTags, setSelectedTags] = useState(["IT", "프로젝트", "React"]);
   // 현재 활성화된 슬라이더 상태 (start 또는 end)
