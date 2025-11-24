@@ -1,0 +1,96 @@
+// 월 레이블 배열 (1월부터 12월까지)
+export const MONTH_LABELS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+// 활동 유형에 사용할 색상 팔레트 (파스텔 톤)
+export const COLOR_PALETTE = [
+  "#C6F5C3",
+  "#CFE0FF",
+  "#E4D6FF",
+  "#FEEFAD",
+  "#FFD6E8",
+  "#C4F1F9",
+  "#FFE0C7",
+  "#D7F9E9",
+  "#E6E6FF",
+  "#F5D0FE",
+];
+
+// 기본 활동 유형 목록
+export const DEFAULT_ACTIVITY_TYPES = [
+  { id: "creative", name: "크리에이티브", color: "#C6F5C3" },
+  { id: "project", name: "프로젝트", color: "#CFE0FF" },
+  { id: "extracurricular", name: "대외활동", color: "#E4D6FF" },
+  { id: "certificate", name: "자격증", color: "#FEEFAD" },
+];
+
+// 기본 활동 목록 (예시 데이터)
+export const DEFAULT_ACTIVITIES = [
+  {
+    id: "act-creative-1",
+    typeId: "creative",
+    title: "방구석의 오늘 뭐했냐",
+    tags: ["IT", "프로젝트", "React"],
+    isImportant: true,
+    startMonth: 8,
+    endMonth: 9,
+  },
+  {
+    id: "act-project-1",
+    typeId: "project",
+    title: "포트폴리오 웹 개발",
+    tags: ["프로젝트", "React"],
+    isImportant: false,
+    startMonth: 8,
+    endMonth: 8,
+  },
+  {
+    id: "act-project-2",
+    typeId: "project",
+    title: "React 대시보드 프로젝트",
+    tags: ["대시보드", "UI"],
+    isImportant: true,
+    startMonth: 9,
+    endMonth: 10,
+  },
+  {
+    id: "act-extracurricular-1",
+    typeId: "extracurricular",
+    title: "해커톤 참가",
+    tags: ["대외활동", "팀워크"],
+    isImportant: true,
+    startMonth: 8,
+    endMonth: 8,
+  },
+  {
+    id: "act-extracurricular-2",
+    typeId: "extracurricular",
+    title: "오픈소스 컨트리뷰션",
+    tags: ["오픈소스", "커뮤니티"],
+    isImportant: false,
+    startMonth: 9,
+    endMonth: 11,
+  },
+  {
+    id: "act-certificate-1",
+    typeId: "certificate",
+    title: "정보처리기사",
+    tags: ["자격증"],
+    isImportant: false,
+    startMonth: 10,
+    endMonth: 10,
+  },
+];
+
