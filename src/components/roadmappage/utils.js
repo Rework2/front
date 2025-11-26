@@ -8,17 +8,30 @@ import { MONTH_LABELS } from "./constants";
 export const getMonthLabel = (monthNumber) => MONTH_LABELS[monthNumber - 1] || "";
 
 /**
- * 기간을 포맷팅 (시작월 - 종료월)
+ * 기간을 포맷팅 (시작연도/월 - 종료연도/월)
  * 시작월과 종료월이 같으면 하나의 월만 반환
+ * @param {number} startYear - 시작연도
  * @param {number} startMonth - 시작월
+ * @param {number} endYear - 종료연도
  * @param {number} endMonth - 종료월
  * @returns {string} 포맷팅된 기간 문자열
  */
-export const formatPeriod = (startMonth, endMonth) => {
-  if (startMonth === endMonth) {
-    return getMonthLabel(startMonth);
+export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
+  const startLabel = getMonthLabel(startMonth);
+  const endLabel = getMonthLabel(endMonth);
+  
+  // 같은 연도, 같은 월
+  if (startYear === endYear && startMonth === endMonth) {
+    return `${startYear}. ${startLabel}`;
   }
-  return `${getMonthLabel(startMonth)} - ${getMonthLabel(endMonth)}`;
+  
+  // 같은 연도, 다른 월
+  if (startYear === endYear) {
+    return `${startYear}. ${startLabel} - ${endLabel}`;
+  }
+  
+  // 다른 연도
+  return `${startYear}. ${startLabel} - ${endYear}. ${endLabel}`;
 };
 
 /**

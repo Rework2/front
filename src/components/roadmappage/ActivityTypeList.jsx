@@ -44,7 +44,7 @@ export function ActivityTypeList({
               className="activity-type-option__indicator"
               style={{ background: type.color }}
             />
-            <span className="activity-type-option__label">{type.name}</span>
+            <span className="activity-type-option__label">{type.label}</span>
           </label>
         ))}
       </div>

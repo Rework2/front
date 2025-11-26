@@ -41,7 +41,7 @@ export function AddActivityForm({
           >
             {activityTypes.map((type) => (
               <option key={type.id} value={type.id}>
-                {type.name}
+                {type.label}
               </option>
             ))}
           </select>
@@ -89,6 +89,42 @@ export function AddActivityForm({
             />
             <span>중요도가 높은 활동</span>
           </label>
+        </div>
+
+        {/* 시작연도/종료연도 선택 */}
+        <div className="add-activity-card__field add-activity-card__field--split">
+          <div>
+            <label className="add-activity-card__label">Start Year</label>
+            <input
+              type="number"
+              className="add-activity-card__input"
+              value={newActivity.startYear}
+              onChange={(event) =>
+                onNewActivityChange({
+                  ...newActivity,
+                  startYear: Number(event.target.value),
+                })
+              }
+              min="2000"
+              max="2100"
+            />
+          </div>
+          <div>
+            <label className="add-activity-card__label">End Year</label>
+            <input
+              type="number"
+              className="add-activity-card__input"
+              value={newActivity.endYear}
+              onChange={(event) =>
+                onNewActivityChange({
+                  ...newActivity,
+                  endYear: Number(event.target.value),
+                })
+              }
+              min="2000"
+              max="2100"
+            />
+          </div>
         </div>
 
         {/* 시작월/종료월 선택 */}

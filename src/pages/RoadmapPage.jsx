@@ -69,7 +69,9 @@ function RoadmapPage() {
     title: "",
     tags: "",
     isImportant: false,
+    startYear: selectedYear,
     startMonth: 8,
+    endYear: selectedYear,
     endMonth: 8,
   });
 
@@ -87,6 +89,15 @@ function RoadmapPage() {
       return prev;
     });
   }, [activityTypes]);
+
+  // 선택된 연도가 변경될 때 새 활동의 연도도 업데이트
+  useEffect(() => {
+    setNewActivity((prev) => ({
+      ...prev,
+      startYear: selectedYear,
+      endYear: selectedYear,
+    }));
+  }, [selectedYear]);
 
   // 표시할 월 목록을 계산 (monthRange.start부터 monthRange.end까지)
   const visibleMonths = useMemo(() => {
@@ -114,6 +125,11 @@ function RoadmapPage() {
         const typeActivities = activities
           // 해당 유형의 활동만 필터링
           .filter((activity) => activity.typeId === type.id)
+          // 선택된 연도와 겹치는 활동만 필터링
+          .filter(
+            (activity) =>
+              activity.startYear <= selectedYear && activity.endYear >= selectedYear
+          )
           // 월 범위와 겹치는 활동만 필터링
           .filter(
             (activity) =>
@@ -150,7 +166,7 @@ function RoadmapPage() {
           activities: typeActivities,
         };
       });
-  }, [activityTypes, selectedTypeSet, activities, monthRange, visibleMonths]);
+  }, [activityTypes, selectedTypeSet, activities, monthRange, visibleMonths, selectedYear]);
 
   /**
    * 태그 제거 핸들러
@@ -238,7 +254,7 @@ function RoadmapPage() {
     // 새로운 활동 유형 객체 생성
     const newType = {
       id: uniqueId,
-      name: trimmed,
+      label: trimmed,
       color,
     };
 
@@ -263,16 +279,25 @@ function RoadmapPage() {
       return;
     }
 
+    let startYear = Number(newActivity.startYear);
+    let endYear = Number(newActivity.endYear);
     let startMonth = Number(newActivity.startMonth);
     let endMonth = Number(newActivity.endMonth);
 
     // 유효하지 않은 숫자면 추가하지 않음
-    if (Number.isNaN(startMonth) || Number.isNaN(endMonth)) {
+    if (Number.isNaN(startYear) || Number.isNaN(endYear) || Number.isNaN(startMonth) || Number.isNaN(endMonth)) {
       return;
     }
 
-    // 시작월이 종료월보다 크면 교환
-    if (startMonth > endMonth) {
+    // 시작연도가 종료연도보다 크면 교환
+    if (startYear > endYear) {
+      [startYear, endYear] = [endYear, startYear];
+      // 연도가 같아지면 월도 교환
+      if (startYear === endYear && startMonth > endMonth) {
+        [startMonth, endMonth] = [endMonth, startMonth];
+      }
+    } else if (startYear === endYear && startMonth > endMonth) {
+      // 같은 연도에서 시작월이 종료월보다 크면 교환
       [startMonth, endMonth] = [endMonth, startMonth];
     }
 
@@ -289,7 +314,9 @@ function RoadmapPage() {
       title,
       tags,
       isImportant: Boolean(newActivity.isImportant),
+      startYear,
       startMonth,
+      endYear,
       endMonth,
     };
 
@@ -305,7 +332,9 @@ function RoadmapPage() {
       title: "",
       tags: "",
       isImportant: false,
+      startYear,
       startMonth,
+      endYear,
       endMonth,
     });
     setIsAddingActivity(false);

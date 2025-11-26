@@ -26,7 +26,7 @@ export function ActivityBar({ activity, activityType, matchingTagSet }) {
       <div className="tooltip-content">
         <div className="tooltip-title">{activity.title}</div>
         <div className="tooltip-meta">
-          {activityType.name} • {formatPeriod(activity.startMonth, activity.endMonth)}
+          {activityType.label} • {formatPeriod(activity.startYear, activity.startMonth, activity.endYear, activity.endMonth)}
         </div>
         {/* 태그가 있는 경우 태그 목록 표시 */}
         {activity.tags.length > 0 && (

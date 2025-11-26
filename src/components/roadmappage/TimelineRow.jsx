@@ -15,7 +15,7 @@ export function TimelineRow({ row, visibleMonths, matchingTagSet }) {
       style={{ gridTemplateColumns: `140px repeat(${visibleMonths.length}, 1fr)` }}
     >
       {/* 활동 유형 레이블 */}
-      <div className="row-label">{row.type.name}</div>
+      <div className="row-label">{row.type.label}</div>
       {/* 활동이 없는 경우 플레이스홀더 표시 */}
       {row.activities.length === 0 ? (
         <div className="timeline-row__placeholder">표시할 활동이 없습니다.</div>
