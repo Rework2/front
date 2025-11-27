@@ -1,0 +1,232 @@
+{
+  "frontend": {
+    "competition": [
+      {
+        "label": "2025 AI CONFERENCE 개발자 커뮤니티 컨퍼런스",
+        "startYear": 2025,
+        "startMonth": 10,
+        "endYear": 2025,
+        "endMonth": 10
+      },
+      {
+        "label": "코드잇 스프린트 프론트엔드 8주 단기 심화 부트캠프",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2025,
+        "endMonth": 2
+      },
+      {
+        "label": "디지털디자인 React 활용 UI/UX 웹퍼블리셔 양성과정",
+        "startYear": 2025,
+        "startMonth": 11,
+        "endYear": 2025,
+        "endMonth": 12
+      }
+    ],
+    "certification": [
+      {
+        "label": "정보처리기사"
+      },
+      {
+        "label": "정보처리산업기사"
+      }
+    ],
+    "internship": [
+      {
+        "label": "넥스트그라운드 전환형 프론트엔드 인턴",
+        "startYear": 2025,
+        "startMonth": 11,
+        "endYear": 2025,
+        "endMonth": 12
+      },
+      {
+        "label": "그로들 프론트엔드 개발자(인턴) 채용",
+        "startYear": 2025,
+        "startMonth": 8,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "인크로스 2025년 하반기 신입(인턴) 채용 (Front-end 개발)",
+        "startYear": 2025,
+        "startMonth": 5,
+        "endYear": 2025,
+        "endMonth": 6
+      }
+    ]
+  },
+  "backend": {
+    "competition": [
+      {
+        "label": "HackSeoul 2025",
+        "startYear": 2025,
+        "startMonth": 11,
+        "endYear": 2025,
+        "endMonth": 11
+      },
+      {
+        "label": "K-PaaS 공모전",
+        "startYear": 2025,
+        "startMonth": 11,
+        "endYear": 2025,
+        "endMonth": 11
+      },
+      {
+        "label": "2025 블레이버스 MVP 개발 해커톤 (시즌 2)",
+        "startYear": 2025,
+        "startMonth": 8,
+        "endYear": 2025,
+        "endMonth": 8
+      }
+    ],
+    "certification": [
+      {
+        "label": "SQLD (SQL 개발자)"
+      },
+      {
+        "label": "정보처리기사"
+      }
+    ],
+    "internship": [
+      {
+        "label": "티빙 – 백엔드 개발자 체험형 인턴",
+        "startYear": 2025,
+        "startMonth": 5,
+        "endYear": 2025,
+        "endMonth": 5
+      },
+      {
+        "label": "인크로스 – 백엔드 개발 인턴 (2025년 하반기)",
+        "startYear": 2025,
+        "startMonth": 5,
+        "endYear": 2025,
+        "endMonth": 6
+      },
+      {
+        "label": "비모소프트 – 백엔드 개발 인턴",
+        "startYear": 2025,
+        "startMonth": 10,
+        "endYear": 2026,
+        "endMonth": 12
+      }
+    ]
+  },
+  "data_scientist": {
+    "competition": [
+      {
+        "label": "DACON",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "Kaggle",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "빅 콘테스트",
+        "startYear": 2025,
+        "startMonth": 9,
+        "endYear": 2025,
+        "endMonth": 12
+      }
+    ],
+    "certification": [
+      {
+        "label": "SQLD (SQL 개발자)"
+      },
+      {
+        "label": "ADsP (국가공인 데이터분석 준전문가)"
+      },
+      {
+        "label": "DAsP (데이터 아키텍처 준전문가)"
+      }
+    ],
+    "internship": [
+      {
+        "label": "현대모비스 데이터사이언스(체험형 인턴)",
+        "startYear": 2025,
+        "startMonth": 7,
+        "endYear": 2025,
+        "endMonth": 8
+      },
+      {
+        "label": "서울대학교 GSDS 2025 하반기 Research Intern",
+        "startYear": 2025,
+        "startMonth": 6,
+        "endYear": 2025,
+        "endMonth": 6
+      },
+      {
+        "label": "PTKOREA 2026 상반기 글로벌 프로젝트 인턴",
+        "startYear": 2025,
+        "startMonth": 11,
+        "endYear": 2026,
+        "endMonth": 12
+      }
+    ]
+  },
+  "ai_ml_engineer": {
+    "competition": [
+      {
+        "label": "2025 국립국어원 인공지능(AI) 말평 경진대회",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "2025 SW중심대학 디지털 경진대회 : SW부문 (Dacon)",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "제5회 MATLAB 대학생 AI 경진대회 (2025)",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      }
+    ],
+    "certification": [
+      {
+        "label": "인공지능산업기사"
+      },
+      {
+        "label": "빅데이터 분석기사"
+      },
+      {
+        "label": "Microsoft Azure AI Fundamentals (AI-900)"
+      }
+    ],
+    "internship": [
+      {
+        "label": "광주 인공지능사관학교 6기 (인턴십 연계형 AI 교육)",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "LG유플러스 2025 해외 석·박사 Global Summer Internship – AI Scientist/Engineer",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      },
+      {
+        "label": "ETRI(한국전자통신연구원) 2025 하계 연구연수생(청년인턴)",
+        "startYear": 2025,
+        "startMonth": 1,
+        "endYear": 2026,
+        "endMonth": 12
+      }
+    ]
+  }
+}

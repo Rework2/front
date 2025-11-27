@@ -1,4 +1,6 @@
 import { MONTH_LABELS } from "./constants";
+import careerData from "./careerData.json";
+import openaiFiles from "./openaiFiles.json";
 
 /**
  * 월 번호를 월 레이블로 변환
@@ -20,17 +22,14 @@ export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
   const startLabel = getMonthLabel(startMonth);
   const endLabel = getMonthLabel(endMonth);
   
-  // 같은 연도, 같은 월
   if (startYear === endYear && startMonth === endMonth) {
     return `${startYear}. ${startLabel}`;
   }
   
-  // 같은 연도, 다른 월
   if (startYear === endYear) {
     return `${startYear}. ${startLabel} - ${endLabel}`;
   }
   
-  // 다른 연도
   return `${startYear}. ${startLabel} - ${endYear}. ${endLabel}`;
 };
 
@@ -59,3 +58,85 @@ export const createSlug = (value) => {
   return base || "custom-type";
 };
 
+/**
+ * targetJob 문자열을 career JSON 키로 매핑한다.
+ * @param {string} targetJob
+ * @returns {"frontend"|"backend"|"data_scientist"|"ai_ml_engineer"|null}
+ */
+export function mapTargetJobToCareerKey(targetJob) {
+  switch (targetJob) {
+    case "프론트엔드 개발자":
+      return "frontend";
+    case "백엔드 개발자":
+      return "backend";
+    case "데이터 사이언티스트":
+      return "data_scientist";
+    case "AI/ML 엔지니어":
+      return "ai_ml_engineer";
+    case "풀스택 개발자":
+      return "backend";
+    default:
+      return null;
+  }
+}
+
+/**
+ * 배열에서 임의의 항목을 1개 반환한다.
+ * @template T
+ * @param {T[]} arr
+ * @returns {T|null}
+ */
+export function getRandomItem(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return null;
+  }
+  const index = Math.floor(Math.random() * arr.length);
+  return arr[index];
+}
+
+/**
+ * 타겟 직무에 맞는 기본 활동을 생성한다.
+ * competition / certification / extracurricular / internship 만 자동 생성한다.
+ * @param {string} targetJob
+ * @returns {Array<{id: string, type: string, label: string, startYear?: number|string, startMonth?: number|string, endYear?: number|string, endMonth?: number|string}>}
+ */
+export function getDefaultActivitiesForTargetJob(targetJob) {
+  const careerKey = mapTargetJobToCareerKey(targetJob);
+  if (!careerKey) {
+    return [];
+  }
+
+  const jobData = careerData[careerKey];
+  if (!jobData) {
+    return [];
+  }
+
+  /** @type {("competition"|"certification"|"extracurricular"|"internship")[]} */
+  const candidateIds = ["competition", "certification", "extracurricular", "internship"];
+  /** @type {Array<{id: string, type: string, label: string, startYear?: number|string, startMonth?: number|string, endYear?: number|string, endMonth?: number|string}>} */
+  const result = [];
+
+  for (const id of candidateIds) {
+    const list = jobData[id];
+    if (!list || list.length === 0) continue;
+
+    const picked = getRandomItem(list);
+    if (!picked) continue;
+
+    result.push({
+      id,
+      type: id,
+      label: picked.label,
+      startYear: picked.startYear ?? "",
+      startMonth: picked.startMonth ?? "",
+      endYear: picked.endYear ?? "",
+      endMonth: picked.endMonth ?? "",
+    });
+  }
+
+  return result;
+}
+
+export function getCareerFileId() {
+  return openaiFiles?.careerFileId || null;
+}

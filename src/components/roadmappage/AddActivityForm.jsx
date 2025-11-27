@@ -1,15 +1,5 @@
 import { MONTH_LABELS } from "./constants";
 
-/**
- * 활동 추가 폼 컴포넌트
- * 새로운 활동을 추가하기 위한 폼 컴포넌트
- * @param {Array} activityTypes - 활동 유형 목록
- * @param {Object} newActivity - 새 활동 데이터
- * @param {Function} onNewActivityChange - 새 활동 데이터 변경 핸들러
- * @param {Function} onSubmit - 폼 제출 핸들러
- * @param {Function} onCancel - 취소 핸들러
- * @param {Component} XIcon - 닫기 아이콘 컴포넌트
- */
 export function AddActivityForm({
   activityTypes,
   newActivity,
@@ -20,16 +10,13 @@ export function AddActivityForm({
 }) {
   return (
     <div className="add-activity-card">
-      {/* 헤더 */}
       <div className="add-activity-card__header">
         <h4>새 활동 추가</h4>
         <button className="icon-button" type="button" onClick={onCancel}>
           {XIcon && <XIcon />}
         </button>
       </div>
-      {/* 폼 */}
       <form onSubmit={onSubmit} className="add-activity-card__form">
-        {/* 활동 유형 선택 */}
         <div className="add-activity-card__field">
           <label className="add-activity-card__label">Activity Type</label>
           <select
@@ -47,7 +34,6 @@ export function AddActivityForm({
           </select>
         </div>
 
-        {/* 활동 제목 입력 */}
         <div className="add-activity-card__field">
           <label className="add-activity-card__label">Title</label>
           <input
@@ -60,7 +46,6 @@ export function AddActivityForm({
           />
         </div>
 
-        {/* 태그 입력 */}
         <div className="add-activity-card__field">
           <label className="add-activity-card__label">Tags</label>
           <input
@@ -73,7 +58,6 @@ export function AddActivityForm({
           />
         </div>
 
-        {/* 중요도 체크박스 */}
         <div className="add-activity-card__field">
           <label className="add-activity-card__label">Important</label>
           <label className="important-checkbox">
@@ -91,7 +75,6 @@ export function AddActivityForm({
           </label>
         </div>
 
-        {/* 시작연도/종료연도 선택 */}
         <div className="add-activity-card__field add-activity-card__field--split">
           <div>
             <label className="add-activity-card__label">Start Year</label>
@@ -127,7 +110,6 @@ export function AddActivityForm({
           </div>
         </div>
 
-        {/* 시작월/종료월 선택 */}
         <div className="add-activity-card__field add-activity-card__field--split">
           <div>
             <label className="add-activity-card__label">Start Month</label>
@@ -169,7 +151,6 @@ export function AddActivityForm({
           </div>
         </div>
 
-        {/* 액션 버튼 */}
         <div className="add-activity-card__actions">
           <button className="primary-button" type="submit">
             저장
