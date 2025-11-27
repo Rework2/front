@@ -1,34 +1,52 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
+import App from "../App";
+import { LandingPage } from "../pages/LandingPage";
+import { LoginPage } from "../pages/LoginPage";
+import { SignUpPage } from "../pages/SignUpPage";
+import { OnboardingPage } from "../pages/OnboardingPage";
+import { DashboardPage } from "../pages/DashboardPage";
+// import { RoadmapPage } from "../pages/RoadmapPage";
+// import { ActivityManagementHub } from "../components/Activity/ActivityManagementHub";
+// import { GrowthInsightDashboard } from "../components/DashBoard/GrowthInsightDashboard";
+import { DashboardLayout } from "../components/Layout/DashboardLayout";
 
-// NavigationLayout
-import Layout from "../pages/Layout";
-import HeaderLayout from "../pages/HeaderLayout";
-
-// Pages
-import Home from "../pages/Home";
-import LoginPage from "../pages/LoginPage";
-
-
-
-const Router = () =>{
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/*왼쪽 네비게이션 바*/}
-        <Route element={<Layout />}>
-        <Route path="/" element={<Home />} /> {/*테스트용 삭제예정*/}
-          {/*대시보드, 인사이트, 활동관리, 로드맵*/}
-        </Route>
-      
-        {/*상단 네비게이션 바 */}
-        <Route element={<HeaderLayout />}>
-          {/* <Route path="/" element={<Home />} /> */} {/*원래 자리*/}
-          <Route path="/login" element={<LoginPage />} />
-          {/*온보딩, 회원가입 */}
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default Router;
+export const Router = createBrowserRouter([
+    {
+        path: "/",
+        element: <App />,
+        children: [
+            {
+                path: "/",
+                element: <LandingPage />,
+            },
+            {
+                path: "/login",
+                element: <LoginPage />,
+            },
+            {
+                path: "/signup",
+                element: <SignUpPage />,
+            },
+            {
+                path: "/onboarding",
+                element: <OnboardingPage />,
+            },
+            {
+                path: "/dashboard",
+                element: <DashboardLayout currentPage="dashboard"><DashboardPage /></DashboardLayout>,
+            },
+            // {
+            //     path: "/roadmap",
+            //     element: <DashboardLayout currentPage="roadmap"><RoadmapPage /></DashboardLayout>,
+            // },
+            // {
+            //     path: "/activities",
+            //     element: <DashboardLayout currentPage="activities"><ActivityManagementHub /></DashboardLayout>,
+            // },
+            // {
+            //     path: "/growth",
+            //     element: <DashboardLayout currentPage="growth"><GrowthInsightDashboard /></DashboardLayout>,
+            // },
+        ],
+    },
+]);
