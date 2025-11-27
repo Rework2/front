@@ -26,13 +26,13 @@ const HomeTitle = styled.div`
 
 const LoginLink = styled(Link)`
     padding: 8px 16px;
-  margin: 20px;
-  background-color: #4caf50;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
+    margin: 20px;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
 
-  &:hover {
-    background-color: #45a049;
-  }
+    &:hover {
+        background-color: #45a049;
+    }
 `;
