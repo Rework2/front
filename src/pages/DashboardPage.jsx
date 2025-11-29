@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../styles/CommonStyles";
+import { Button } from "../components/common";
 import {
   TrendingUp,
   CheckCircle,
@@ -12,24 +12,7 @@ import {
   Target
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import {
-  PageContainer,
-  Container,
-  Header,
-  StatsGrid,
-  StatCard,
-  StatHeader,
-  StatInfo,
-  StatIcon,
-  ProgressBar,
-  ProgressFill,
-  ContentGrid,
-  MainColumn,
-  SidebarColumn,
-  Card,
-  CardHeader,
-  AICard
-} from "../styles/DashboardPage.styles";
+import * as S from "../styles/DashboardPage.styles";
 
 // 온보딩 데이터 저장 키 (둘 다 시도)
 const ONBOARDING_KEYS = ["reworkOnboardingData", "reworkOnboarding"];
@@ -107,9 +90,9 @@ export function DashboardPage() {
   const jobLabel = onboardingData?.targetJob || "희망 직무 미설정";
 
   return (
-    <PageContainer>
-      <Container>
-        <Header>
+    <S.PageContainer>
+      <S.Container>
+        <S.Header>
           <h1>대시보드</h1>
           <p>
             포트폴리오 준비 현황을 한눈에 확인하세요
@@ -120,71 +103,71 @@ export function DashboardPage() {
               </>
             )}
           </p>
-        </Header>
+        </S.Header>
 
-        <StatsGrid>
-          <StatCard>
-            <StatHeader>
-              <StatInfo>
+        <S.StatsGrid>
+          <S.StatCard>
+            <S.StatHeader>
+              <S.StatInfo>
                 <p>전체 진행률</p>
                 <h3>{progress}%</h3>
-              </StatInfo>
-              <StatIcon bgColor={`linear-gradient(to bottom right, #2A5EE4, #5F8EF8)`}>
+              </S.StatInfo>
+              <S.StatIcon $bgColor={`linear-gradient(to bottom right, #2A5EE4, #5F8EF8)`}>
                 <TrendingUp style={{ width: "1.5rem", height: "1.5rem", color: "white" }} />
-              </StatIcon>
-            </StatHeader>
-            <ProgressBar>
-              <ProgressFill value={progress} />
-            </ProgressBar>
-          </StatCard>
+              </S.StatIcon>
+            </S.StatHeader>
+            <S.ProgressBar>
+              <S.ProgressFill $value={progress} />
+            </S.ProgressBar>
+          </S.StatCard>
 
-          <StatCard>
-            <StatHeader>
-              <StatInfo>
+          <S.StatCard>
+            <S.StatHeader>
+              <S.StatInfo>
                 <p>완료 활동</p>
                 <h3>4개</h3>
-              </StatInfo>
-              <StatIcon bgColor="rgb(220 252 231)">
+              </S.StatInfo>
+              <S.StatIcon $bgColor="rgb(220 252 231)">
                 <CheckCircle style={{ width: "1.5rem", height: "1.5rem", color: "#10B981" }} />
-              </StatIcon>
-            </StatHeader>
-          </StatCard>
+              </S.StatIcon>
+            </S.StatHeader>
+          </S.StatCard>
 
-          <StatCard>
-            <StatHeader>
-              <StatInfo>
+          <S.StatCard>
+            <S.StatHeader>
+              <S.StatInfo>
                 <p>진행 중</p>
                 <h3>2개</h3>
-              </StatInfo>
-              <StatIcon bgColor="rgb(219 234 254)">
+              </S.StatInfo>
+              <S.StatIcon $bgColor="rgb(219 234 254)">
                 <PlayCircle style={{ width: "1.5rem", height: "1.5rem", color: "#3B82F6" }} />
-              </StatIcon>
-            </StatHeader>
-          </StatCard>
+              </S.StatIcon>
+            </S.StatHeader>
+          </S.StatCard>
 
-          <StatCard>
-            <StatHeader>
-              <StatInfo>
+          <S.StatCard>
+            <S.StatHeader>
+              <S.StatInfo>
                 <p>예정</p>
                 <h3>3개</h3>
-              </StatInfo>
-              <StatIcon bgColor="rgb(254 249 195)">
+              </S.StatInfo>
+              <S.StatIcon $bgColor="rgb(254 249 195)">
                 <Clock style={{ width: "1.5rem", height: "1.5rem", color: "#EAB308" }} />
-              </StatIcon>
-            </StatHeader>
-          </StatCard>
-        </StatsGrid>
+              </S.StatIcon>
+            </S.StatHeader>
+          </S.StatCard>
+        </S.StatsGrid>
 
-        <ContentGrid>
-          <MainColumn>
-            <Card>
-              <CardHeader>
+        <S.ContentGrid>
+          <S.MainColumn>
+            <S.Card>
+              <S.CardHeader>
                 <h2>진행 추이</h2>
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  textColor="#2A5EE4"
-                  hoverBg="#E9F1FF"
+                  $variant="ghost"
+                  $size="sm"
+                  $textColor="#2A5EE4"
+                  $hoverBg="#E9F1FF"
                   onClick={handleGoGrowthInsights}
                 >
                   성장 인사이트 대시보드
@@ -192,7 +175,7 @@ export function DashboardPage() {
                     style={{ marginLeft: "0.5rem", width: "1rem", height: "1rem" }}
                   />
                 </Button>
-              </CardHeader>
+              </S.CardHeader>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={progressData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -223,16 +206,16 @@ export function DashboardPage() {
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </Card>
+            </S.Card>
 
-            <Card>
-              <CardHeader>
+            <S.Card>
+              <S.CardHeader>
                 <h2>최근 활동</h2>
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  textColor="#2A5EE4"
-                  hoverBg="#E9F1FF"
+                  $variant="ghost"
+                  $size="sm"
+                  $textColor="#2A5EE4"
+                  $hoverBg="#E9F1FF"
                   onClick={handleGoActivityHub}
                 >
                   활동 관리 허브
@@ -240,13 +223,13 @@ export function DashboardPage() {
                     style={{ marginLeft: "0.5rem", width: "1rem", height: "1rem" }}
                   />
                 </Button>
-              </CardHeader>
+              </S.CardHeader>
               <p style={{ color: "#64748B" }}>활동 목록이 여기에 표시됩니다</p>
-            </Card>
-          </MainColumn>
+            </S.Card>
+          </S.MainColumn>
 
-          <SidebarColumn>
-            <AICard>
+          <S.SidebarColumn>
+            <S.AICard>
               <div
                 style={{
                   display: "flex",
@@ -280,18 +263,18 @@ export function DashboardPage() {
                   style={{ marginLeft: "0.5rem", width: "1rem", height: "1rem" }}
                 />
               </Button>
-            </AICard>
+            </S.AICard>
 
-            <Card>
+            <S.Card>
               <h3 style={{ marginBottom: "1rem", color: "#0F172A" }}>
                 다가오는 마감일
               </h3>
               <p style={{ color: "#64748B" }}>
                 마감일 목록이 여기에 표시됩니다
               </p>
-            </Card>
+            </S.Card>
 
-            <Card>
+            <S.Card>
               <h3 style={{ marginBottom: "1rem", color: "#0F172A" }}>
                 빠른 작업
               </h3>
@@ -303,10 +286,10 @@ export function DashboardPage() {
                 }}
               >
                 <Button
-                  variant="outline"
-                  borderColor="#2A5EE4"
-                  textColor="#2A5EE4"
-                  hoverBg="#E9F1FF"
+                  $variant="outline"
+                  $borderColor="#2A5EE4"
+                  $textColor="#2A5EE4"
+                  $hoverBg="#E9F1FF"
                   style={{ width: "100%", justifyContent: "flex-start" }}
                 >
                   <FileText
@@ -319,10 +302,10 @@ export function DashboardPage() {
                   활동 관리 & 증빙 추가
                 </Button>
                 <Button
-                  variant="outline"
-                  borderColor="#2A5EE4"
-                  textColor="#2A5EE4"
-                  hoverBg="#E9F1FF"
+                  $variant="outline"
+                  $borderColor="#2A5EE4"
+                  $textColor="#2A5EE4"
+                  $hoverBg="#E9F1FF"
                   style={{ width: "100%", justifyContent: "flex-start" }}
                 >
                   <Target
@@ -335,10 +318,10 @@ export function DashboardPage() {
                   스킬 & 리포트 보기
                 </Button>
               </div>
-            </Card>
-          </SidebarColumn>
-        </ContentGrid>
-      </Container>
-    </PageContainer>
+            </S.Card>
+          </S.SidebarColumn>
+        </S.ContentGrid>
+      </S.Container>
+    </S.PageContainer>
   );
 }

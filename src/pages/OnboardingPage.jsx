@@ -1,30 +1,8 @@
 import { useState, useEffect } from "react";
-import { Button, Label } from "../styles/CommonStyles";
+import { Button, Label } from "../components/common";
 import { ArrowRight, ArrowLeft, Sparkles, GraduationCap, Briefcase, Calendar, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {
-  PageContainer,
-  Container,
-  Header,
-  Badge,
-  Title,
-  Description,
-  ProgressSection,
-  ProgressInfo,
-  ProgressBar,
-  ProgressFill,
-  StepIndicators,
-  StepIndicator,
-  StepCircle,
-  StepLabel,
-  FormCard,
-  FormTitle,
-  FormGrid,
-  Select,
-  CheckboxGrid,
-  CheckboxLabel,
-  NavigationRow
-} from "../styles/OnboardingPage.styles";
+import * as S from "../styles/OnboardingPage.styles";
 
 const ONBOARDING_STORAGE_KEY = "rework_onboarding";
 
@@ -140,51 +118,51 @@ export function OnboardingPage() {
   };
 
   return (
-    <PageContainer>
-      <Container>
-        <Header>
-          <Badge>
+    <S.PageContainer>
+      <S.Container>
+        <S.Header>
+          <S.Badge>
             <Sparkles style={{ height: '1rem', width: '1rem', color: '#2A5EE4' }} />
             <span>AI 맞춤 로드맵 생성</span>
-          </Badge>
-          <Title>나만의 포트폴리오 로드맵을 만들어보세요</Title>
-          <Description>몇 가지 정보만 입력하면 AI가 최적의 경로를 제안해드립니다</Description>
-        </Header>
+          </S.Badge>
+          <S.Title>나만의 포트폴리오 로드맵을 만들어보세요</S.Title>
+          <S.Description>몇 가지 정보만 입력하면 AI가 최적의 경로를 제안해드립니다</S.Description>
+        </S.Header>
 
-        <ProgressSection>
-          <ProgressInfo>
+        <S.ProgressSection>
+          <S.ProgressInfo>
             <span>단계 {step} / {totalSteps}</span>
             <span className="percentage">{Math.round(progress)}%</span>
-          </ProgressInfo>
-          <ProgressBar>
-            <ProgressFill value={progress} />
-          </ProgressBar>
-        </ProgressSection>
+          </S.ProgressInfo>
+          <S.ProgressBar>
+            <S.ProgressFill $value={progress} />
+          </S.ProgressBar>
+        </S.ProgressSection>
 
-        <StepIndicators>
+        <S.StepIndicators>
           {[1, 2, 3, 4].map((s) => {
             const StepIcon = getStepIcon(s);
             return (
-              <StepIndicator key={s}>
-                <StepCircle active={step === s} completed={step > s}>
+              <S.StepIndicator key={s}>
+                <S.StepCircle $active={step === s} $completed={step > s}>
                   <StepIcon style={{ width: '1.25rem', height: '1.25rem' }} />
-                </StepCircle>
-                <StepLabel active={step === s}>단계 {s}</StepLabel>
-              </StepIndicator>
+                </S.StepCircle>
+                <S.StepLabel $active={step === s}>단계 {s}</S.StepLabel>
+              </S.StepIndicator>
             );
           })}
-        </StepIndicators>
+        </S.StepIndicators>
 
-        <FormCard>
+        <S.FormCard>
           {step === 1 && (
-            <FormGrid>
-              <FormTitle>
+            <S.FormGrid>
+              <S.FormTitle>
                 <GraduationCap style={{ width: '1.5rem', height: '1.5rem' }} />
                 전공 정보를 입력해주세요
-              </FormTitle>
+              </S.FormTitle>
               <div>
                 <Label htmlFor="major">전공</Label>
-                <Select
+                <S.Select
                   id="major"
                   value={formData.major}
                   onChange={(e) =>
@@ -195,20 +173,20 @@ export function OnboardingPage() {
                   {majors.map(major => (
                     <option key={major} value={major}>{major}</option>
                   ))}
-                </Select>
+                </S.Select>
               </div>
-            </FormGrid>
+            </S.FormGrid>
           )}
 
           {step === 2 && (
-            <FormGrid>
-              <FormTitle>
+            <S.FormGrid>
+              <S.FormTitle>
                 <Briefcase style={{ width: '1.5rem', height: '1.5rem' }} />
                 희망 직무를 선택해주세요
-              </FormTitle>
+              </S.FormTitle>
               <div>
                 <Label htmlFor="targetJob">희망 직무</Label>
-                <Select
+                <S.Select
                   id="targetJob"
                   value={formData.targetJob}
                   onChange={(e) =>
@@ -219,20 +197,20 @@ export function OnboardingPage() {
                   {targetJobs.map(job => (
                     <option key={job} value={job}>{job}</option>
                   ))}
-                </Select>
+                </S.Select>
               </div>
-            </FormGrid>
+            </S.FormGrid>
           )}
 
           {step === 3 && (
-            <FormGrid>
-              <FormTitle>
+            <S.FormGrid>
+              <S.FormTitle>
                 <Calendar style={{ width: '1.5rem', height: '1.5rem' }} />
                 준비 기간을 설정해주세요
-              </FormTitle>
+              </S.FormTitle>
               <div>
                 <Label htmlFor="preparationPeriod">준비 기간</Label>
-                <Select
+                <S.Select
                   id="preparationPeriod"
                   value={formData.preparationPeriod}
                   onChange={(e) =>
@@ -244,22 +222,22 @@ export function OnboardingPage() {
                   <option value="6months">6개월</option>
                   <option value="12months">12개월</option>
                   <option value="flexible">유동적</option>
-                </Select>
+                </S.Select>
               </div>
-            </FormGrid>
+            </S.FormGrid>
           )}
 
           {step === 4 && (
-            <FormGrid>
-              <FormTitle>
+            <S.FormGrid>
+              <S.FormTitle>
                 <Target style={{ width: '1.5rem', height: '1.5rem' }} />
                 관심 활동을 선택해주세요
-              </FormTitle>
-              <CheckboxGrid>
+              </S.FormTitle>
+              <S.CheckboxGrid>
                 {activities.map(activity => (
-                  <CheckboxLabel
+                  <S.CheckboxLabel
                     key={activity.id}
-                    checked={formData.preferredActivities.includes(activity.id)}
+                    $checked={formData.preferredActivities.includes(activity.id)}
                   >
                     <input
                       type="checkbox"
@@ -267,19 +245,19 @@ export function OnboardingPage() {
                       onChange={() => handleActivityToggle(activity.id)}
                     />
                     <span>{activity.label}</span>
-                  </CheckboxLabel>
+                  </S.CheckboxLabel>
                 ))}
-              </CheckboxGrid>
-            </FormGrid>
+              </S.CheckboxGrid>
+            </S.FormGrid>
           )}
-        </FormCard>
+        </S.FormCard>
 
-        <NavigationRow>
+        <S.NavigationRow>
           {step > 1 && (
             <Button
-              variant="outline"
-              borderColor="#2A5EE4"
-              textColor="#2A5EE4"
+              $variant="outline"
+              $borderColor="#2A5EE4"
+              $textColor="#2A5EE4"
               onClick={() => setStep(step - 1)}
             >
               <ArrowLeft style={{ marginRight: '0.5rem', width: '1rem', height: '1rem' }} />
@@ -288,7 +266,7 @@ export function OnboardingPage() {
           )}
           {step < totalSteps ? (
             <Button
-              gradient
+              $gradient
               style={{ marginLeft: 'auto' }}
               onClick={() => setStep(step + 1)}
             >
@@ -297,7 +275,7 @@ export function OnboardingPage() {
             </Button>
           ) : (
             <Button
-              gradient
+              $gradient
               style={{ marginLeft: 'auto' }}
               onClick={handleSubmit}
             >
@@ -305,8 +283,8 @@ export function OnboardingPage() {
               <ArrowRight style={{ marginLeft: '0.5rem', width: '1rem', height: '1rem' }} />
             </Button>
           )}
-        </NavigationRow>
-      </Container>
-    </PageContainer>
+        </S.NavigationRow>
+      </S.Container>
+    </S.PageContainer>
   );
 }

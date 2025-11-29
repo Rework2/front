@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { Card } from "../components/common";
+export { Card };
 
 export const PageContainer = styled.div`
   min-height: 100vh;
@@ -72,16 +74,14 @@ export const StatInfo = styled.div`
   }
 `;
 
-export const StatIcon = styled.div.withConfig({
-    shouldForwardProp: (prop) => !['bgColor'].includes(prop),
-})`
+export const StatIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 3rem;
   height: 3rem;
   border-radius: ${props => props.theme.borderRadius.xl};
-  background: ${props => props.bgColor || props.theme.colors.primaryLighter};
+  background: ${props => props.$bgColor || props.theme.colors.primaryLighter};
 `;
 
 export const ProgressBar = styled.div`
@@ -93,11 +93,9 @@ export const ProgressBar = styled.div`
   margin-top: ${props => props.theme.spacing.md};
 `;
 
-export const ProgressFill = styled.div.withConfig({
-    shouldForwardProp: (prop) => !['value'].includes(prop),
-})`
+export const ProgressFill = styled.div`
   height: 100%;
-  width: ${props => props.value}%;
+  width: ${props => props.$value}%;
   background: linear-gradient(
     to right,
     ${props => props.theme.colors.primary},
@@ -127,12 +125,7 @@ export const SidebarColumn = styled.div`
   gap: ${props => props.theme.spacing['2xl']};
 `;
 
-export const Card = styled.div`
-  background: ${props => props.theme.colors.white};
-  border-radius: ${props => props.theme.borderRadius['2xl']};
-  padding: ${props => props.theme.spacing.lg};
-  box-shadow: ${props => props.theme.shadows.lg};
-`;
+
 
 export const CardHeader = styled.div`
   display: flex;

@@ -1,27 +1,8 @@
 import { useState } from "react";
-import { Button, Label, AlertDescription } from "../styles/CommonStyles";
+import { Button, Label, AlertDescription } from "../components/common";
 import { Brain, Lock, Mail, Calendar, ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {
-  PageContainer,
-  SignUpCard,
-  LogoSection,
-  LogoIcon,
-  Title,
-  Subtitle,
-  Form,
-  FormGroup,
-  InputContainer,
-  InputIcon,
-  StyledInput,
-  ErrorText,
-  CheckboxLabel,
-  PasswordStrength,
-  StrengthItem,
-  TextCenter,
-  BackButton,
-  SuccessAlert
-} from "../styles/SignUpPage.styles";
+import * as S from "../styles/SignUpPage.styles";
 
 export function SignUpPage() {
   const navigate = useNavigate();
@@ -113,159 +94,159 @@ export function SignUpPage() {
   };
 
   return (
-    <PageContainer>
-      <SignUpCard>
-        <LogoSection>
-          <LogoIcon>
+    <S.PageContainer>
+      <S.SignUpCard>
+        <S.LogoSection>
+          <S.LogoIcon>
             <Brain style={{ height: '2rem', width: '2rem', color: 'white' }} />
-          </LogoIcon>
-          <Title>Re:Work 시작하기</Title>
-          <Subtitle>AI 기반 포트폴리오 준비를 시작하세요</Subtitle>
-        </LogoSection>
+          </S.LogoIcon>
+          <S.Title>Re:Work 시작하기</S.Title>
+          <S.Subtitle>AI 기반 포트폴리오 준비를 시작하세요</S.Subtitle>
+        </S.LogoSection>
 
         {showSuccess && (
-          <SuccessAlert variant="success">
+          <S.SuccessAlert $variant="success">
             <Check style={{ height: '1rem', width: '1rem' }} />
             <AlertDescription>회원가입이 완료되었습니다! 온보딩 페이지로 이동합니다...</AlertDescription>
-          </SuccessAlert>
+          </S.SuccessAlert>
         )}
 
-        <Form onSubmit={handleSignUp}>
-          <FormGroup>
+        <S.Form onSubmit={handleSignUp}>
+          <S.FormGroup>
             <Label htmlFor="email">이메일</Label>
-            <InputContainer>
-              <InputIcon>
+            <S.InputContainer>
+              <S.InputIcon>
                 <Mail style={{ height: '1.25rem', width: '1.25rem' }} />
-              </InputIcon>
-              <StyledInput
+              </S.InputIcon>
+              <S.StyledInput
                 id="email"
                 type="email"
                 placeholder="your@email.com"
                 value={formData.email}
-                error={errors.email}
+                $error={errors.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
               />
-            </InputContainer>
-            {errors.email && <ErrorText>{errors.email}</ErrorText>}
-          </FormGroup>
+            </S.InputContainer>
+            {errors.email && <S.ErrorText>{errors.email}</S.ErrorText>}
+          </S.FormGroup>
 
-          <FormGroup>
+          <S.FormGroup>
             <Label htmlFor="password">비밀번호</Label>
-            <InputContainer>
-              <InputIcon>
+            <S.InputContainer>
+              <S.InputIcon>
                 <Lock style={{ height: '1.25rem', width: '1.25rem' }} />
-              </InputIcon>
-              <StyledInput
+              </S.InputIcon>
+              <S.StyledInput
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={formData.password}
-                error={errors.password}
+                $error={errors.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
               />
-            </InputContainer>
-            {errors.password && <ErrorText>{errors.password}</ErrorText>}
+            </S.InputContainer>
+            {errors.password && <S.ErrorText>{errors.password}</S.ErrorText>}
 
             {formData.password && (
-              <PasswordStrength>
-                <StrengthItem met={passwordStrength.length}>
+              <S.PasswordStrength>
+                <S.StrengthItem $met={passwordStrength.length}>
                   <Check style={{ height: '0.75rem', width: '0.75rem' }} />
                   <span>최소 8자 이상</span>
-                </StrengthItem>
-                <StrengthItem met={passwordStrength.uppercase}>
+                </S.StrengthItem>
+                <S.StrengthItem $met={passwordStrength.uppercase}>
                   <Check style={{ height: '0.75rem', width: '0.75rem' }} />
                   <span>대문자 포함</span>
-                </StrengthItem>
-                <StrengthItem met={passwordStrength.lowercase}>
+                </S.StrengthItem>
+                <S.StrengthItem $met={passwordStrength.lowercase}>
                   <Check style={{ height: '0.75rem', width: '0.75rem' }} />
                   <span>소문자 포함</span>
-                </StrengthItem>
-                <StrengthItem met={passwordStrength.number}>
+                </S.StrengthItem>
+                <S.StrengthItem $met={passwordStrength.number}>
                   <Check style={{ height: '0.75rem', width: '0.75rem' }} />
                   <span>숫자 포함</span>
-                </StrengthItem>
-              </PasswordStrength>
+                </S.StrengthItem>
+              </S.PasswordStrength>
             )}
-          </FormGroup>
+          </S.FormGroup>
 
-          <FormGroup>
+          <S.FormGroup>
             <Label htmlFor="confirmPassword">비밀번호 확인</Label>
-            <InputContainer>
-              <InputIcon>
+            <S.InputContainer>
+              <S.InputIcon>
                 <Lock style={{ height: '1.25rem', width: '1.25rem' }} />
-              </InputIcon>
-              <StyledInput
+              </S.InputIcon>
+              <S.StyledInput
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
-                error={errors.confirmPassword}
+                $error={errors.confirmPassword}
                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
               />
-            </InputContainer>
-            {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
-          </FormGroup>
+            </S.InputContainer>
+            {errors.confirmPassword && <S.ErrorText>{errors.confirmPassword}</S.ErrorText>}
+          </S.FormGroup>
 
-          <FormGroup>
+          <S.FormGroup>
             <Label htmlFor="birthDate">생년월일</Label>
-            <InputContainer>
-              <InputIcon>
+            <S.InputContainer>
+              <S.InputIcon>
                 <Calendar style={{ height: '1.25rem', width: '1.25rem' }} />
-              </InputIcon>
-              <StyledInput
+              </S.InputIcon>
+              <S.StyledInput
                 id="birthDate"
                 type="date"
                 value={formData.birthDate}
-                error={errors.birthDate}
+                $error={errors.birthDate}
                 onChange={(e) => handleInputChange('birthDate', e.target.value)}
               />
-            </InputContainer>
-            {errors.birthDate && <ErrorText>{errors.birthDate}</ErrorText>}
-          </FormGroup>
+            </S.InputContainer>
+            {errors.birthDate && <S.ErrorText>{errors.birthDate}</S.ErrorText>}
+          </S.FormGroup>
 
-          <CheckboxLabel>
+          <S.CheckboxLabel>
             <input
               type="checkbox"
               checked={acceptTerms}
               onChange={(e) => setAcceptTerms(e.target.checked)}
             />
             <span>이용약관 및 개인정보처리방침에 동의합니다</span>
-          </CheckboxLabel>
+          </S.CheckboxLabel>
 
           <Button
             type="submit"
-            gradient
+            $gradient
             style={{ padding: '1.5rem', width: '100%' }}
           >
             회원가입
             <ArrowRight style={{ marginLeft: '0.5rem', height: '1.25rem', width: '1.25rem' }} />
           </Button>
-        </Form>
+        </S.Form>
 
-        <TextCenter style={{ marginTop: '1.5rem' }}>
+        <S.TextCenter style={{ marginTop: '1.5rem' }}>
           <p>
             이미 계정이 있으신가요?{" "}
             <Button
               type="button"
-              variant="link"
+              $variant="link"
               onClick={() => navigate("/login")}
             >
               로그인
             </Button>
           </p>
-        </TextCenter>
+        </S.TextCenter>
 
-        <BackButton>
+        <S.BackButton>
           <Button
             type="button"
-            variant="ghost"
-            textColor="rgba(15, 23, 42, 0.6)"
+            $variant="ghost"
+            $textColor="rgba(15, 23, 42, 0.6)"
             onClick={() => navigate("/")}
           >
             ← 메인으로 돌아가기
           </Button>
-        </BackButton>
-      </SignUpCard>
-    </PageContainer>
+        </S.BackButton>
+      </S.SignUpCard>
+    </S.PageContainer>
   );
 }

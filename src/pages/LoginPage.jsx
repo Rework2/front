@@ -1,28 +1,8 @@
 import { useState } from "react";
-import { Button, Label, Alert, AlertDescription } from "../styles/CommonStyles";
+import { Button, Label, Alert, AlertDescription } from "../components/common";
 import { Brain, Lock, Mail, AlertCircle, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {
-  PageContainer,
-  LoginCard,
-  LogoSection,
-  LogoIcon,
-  Title,
-  Subtitle,
-  Form,
-  FormGroup,
-  InputContainer,
-  InputIcon,
-  StyledInput,
-  ErrorText,
-  RememberForgotRow,
-  CheckboxLabel,
-  DemoInfo,
-  Divider,
-  DividerText,
-  TextCenter,
-  BackButton
-} from "../styles/LoginPage.styles";
+import * as S from "../styles/LoginPage.styles";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -71,137 +51,137 @@ export function LoginPage() {
   };
 
   return (
-    <PageContainer>
-      <LoginCard>
+    <S.PageContainer>
+      <S.LoginCard>
         {/* Logo & Title */}
-        <LogoSection>
-          <LogoIcon>
+        <S.LogoSection>
+          <S.LogoIcon>
             <Brain style={{ height: '2rem', width: '2rem', color: 'white' }} />
-          </LogoIcon>
-          <Title>Re:Work에 로그인</Title>
-          <Subtitle>AI 기반 포트폴리오 준비 플래너</Subtitle>
-        </LogoSection>
+          </S.LogoIcon>
+          <S.Title>Re:Work에 로그인</S.Title>
+          <S.Subtitle>AI 기반 포트폴리오 준비 플래너</S.Subtitle>
+        </S.LogoSection>
 
         {/* Login Error */}
         {loginError && (
-          <Alert variant="error" style={{ marginBottom: '1.5rem' }}>
+          <Alert $variant="error" style={{ marginBottom: '1.5rem' }}>
             <AlertCircle style={{ height: '1rem', width: '1rem' }} />
             <AlertDescription>{loginError}</AlertDescription>
           </Alert>
         )}
 
         {/* Login Form */}
-        <Form onSubmit={handleLogin}>
+        <S.Form onSubmit={handleLogin}>
           {/* Email Input */}
-          <FormGroup>
+          <S.FormGroup>
             <Label htmlFor="email">이메일</Label>
-            <InputContainer>
-              <InputIcon>
+            <S.InputContainer>
+              <S.InputIcon>
                 <Mail style={{ height: '1.25rem', width: '1.25rem' }} />
-              </InputIcon>
-              <StyledInput
+              </S.InputIcon>
+              <S.StyledInput
                 id="email"
                 type="email"
                 placeholder="your@email.com"
                 value={email}
-                error={errors.email}
+                $error={errors.email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setErrors({ ...errors, email: undefined });
                   setLoginError("");
                 }}
               />
-            </InputContainer>
-            {errors.email && <ErrorText>{errors.email}</ErrorText>}
-          </FormGroup>
+            </S.InputContainer>
+            {errors.email && <S.ErrorText>{errors.email}</S.ErrorText>}
+          </S.FormGroup>
 
           {/* Password Input */}
-          <FormGroup>
+          <S.FormGroup>
             <Label htmlFor="password">비밀번호</Label>
-            <InputContainer>
-              <InputIcon>
+            <S.InputContainer>
+              <S.InputIcon>
                 <Lock style={{ height: '1.25rem', width: '1.25rem' }} />
-              </InputIcon>
-              <StyledInput
+              </S.InputIcon>
+              <S.StyledInput
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}
-                error={errors.password}
+                $error={errors.password}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setErrors({ ...errors, password: undefined });
                   setLoginError("");
                 }}
               />
-            </InputContainer>
-            {errors.password && <ErrorText>{errors.password}</ErrorText>}
-          </FormGroup>
+            </S.InputContainer>
+            {errors.password && <S.ErrorText>{errors.password}</S.ErrorText>}
+          </S.FormGroup>
 
           {/* Remember & Forgot */}
-          <RememberForgotRow>
-            <CheckboxLabel>
+          <S.RememberForgotRow>
+            <S.CheckboxLabel>
               <input type="checkbox" />
               <span>로그인 상태 유지</span>
-            </CheckboxLabel>
+            </S.CheckboxLabel>
             <Button
               type="button"
-              variant="link"
+              $variant="link"
               style={{ fontSize: '0.875rem' }}
             >
               비밀번호 찾기
             </Button>
-          </RememberForgotRow>
+          </S.RememberForgotRow>
 
           {/* Login Button */}
           <Button
             type="submit"
-            gradient
+            $gradient
             style={{ padding: '1.5rem', width: '100%' }}
           >
             로그인
             <ArrowRight style={{ marginLeft: '0.5rem', height: '1.25rem', width: '1.25rem' }} />
           </Button>
-        </Form>
+        </S.Form>
 
         {/* Demo Account Info */}
-        <DemoInfo>
+        <S.DemoInfo>
           <p>데모 계정으로 체험하기</p>
           <p className="info-text">이메일: demo@rework.com</p>
           <p className="info-text">비밀번호: demo123</p>
-        </DemoInfo>
+        </S.DemoInfo>
 
         {/* Divider */}
-        <Divider>
-          <DividerText>또는</DividerText>
-        </Divider>
+        <S.Divider>
+          <S.DividerText>또는</S.DividerText>
+        </S.Divider>
 
         {/* Sign Up Link */}
-        <TextCenter>
+        <S.TextCenter>
           <p>
             아직 계정이 없으신가요?{" "}
             <Button
               type="button"
-              variant="link"
+              $variant="link"
               onClick={() => navigate("/signup")}
             >
               무료로 시작하기
             </Button>
           </p>
-        </TextCenter>
+        </S.TextCenter>
 
         {/* Back to Landing */}
-        <BackButton>
+        <S.BackButton>
           <Button
             type="button"
-            variant="ghost"
-            textColor="rgba(15, 23, 42, 0.6)"
+            $variant="ghost"
+            $textColor="rgba(15, 23, 42, 0.6)"
             onClick={() => navigate("/")}
           >
             ← 메인으로 돌아가기
           </Button>
-        </BackButton>
-      </LoginCard>
-    </PageContainer>
+        </S.BackButton>
+      </S.LoginCard>
+    </S.PageContainer>
   );
 }

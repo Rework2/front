@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Card, Input } from "../styles/CommonStyles";
+import { Card } from "../components/common";
 
 export const PageContainer = styled.div`
   min-height: 100vh;
@@ -69,7 +69,7 @@ export const ProgressBar = styled.div`
 
 export const ProgressFill = styled.div`
   height: 100%;
-  width: ${props => props.value}%;
+  width: ${props => props.$value}%;
   background: linear-gradient(to right, ${props => props.theme.colors.primary}, ${props => props.theme.colors.primaryLight});
   transition: width 0.3s ease;
 `;
@@ -88,30 +88,26 @@ export const StepIndicator = styled.div`
   gap: 0.5rem;
 `;
 
-export const StepCircle = styled.div.withConfig({
-    shouldForwardProp: (prop) => !['active', 'completed'].includes(prop),
-})`
+export const StepCircle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 3rem;
   height: 3rem;
   border-radius: ${props => props.theme.borderRadius.xl};
-  background: ${props => props.active
-        ? `linear-gradient(to bottom right, ${props.theme.colors.primary}, ${props.theme.colors.primaryLight})`
-        : props.completed
-            ? props.theme.colors.primaryLighter
-            : '#E5E7EB'
-    };
-  color: ${props => props.active || props.completed ? props.theme.colors.primary : props.theme.colors.textLighter};
+  background: ${props => props.$active
+    ? `linear-gradient(to bottom right, ${props.theme.colors.primary}, ${props.theme.colors.primaryLight})`
+    : props.$completed
+      ? props.theme.colors.primaryLighter
+      : '#E5E7EB'
+  };
+  color: ${props => props.$active || props.$completed ? props.theme.colors.primary : props.theme.colors.textLighter};
   transition: ${props => props.theme.transitions.default};
 `;
 
-export const StepLabel = styled.span.withConfig({
-    shouldForwardProp: (prop) => !['active'].includes(prop),
-})`
+export const StepLabel = styled.span`
   font-size: 0.75rem;
-  color: ${props => props.active ? props.theme.colors.primary : props.theme.colors.textLighter};
+  color: ${props => props.$active ? props.theme.colors.primary : props.theme.colors.textLighter};
 `;
 
 export const FormCard = styled(Card)`
@@ -162,9 +158,9 @@ export const CheckboxLabel = styled.label`
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border: 2px solid ${props => props.checked ? props.theme.colors.primary : props.theme.colors.border};
+  border: 2px solid ${props => props.$checked ? props.theme.colors.primary : props.theme.colors.border};
   border-radius: ${props => props.theme.borderRadius.lg};
-  background: ${props => props.checked ? props.theme.colors.primaryLighter : props.theme.colors.white};
+  background: ${props => props.$checked ? props.theme.colors.primaryLighter : props.theme.colors.white};
   cursor: pointer;
   transition: ${props => props.theme.transitions.default};
   
@@ -175,8 +171,8 @@ export const CheckboxLabel = styled.label`
   }
   
   span {
-    color: ${props => props.checked ? props.theme.colors.primary : props.theme.colors.text};
-    font-weight: ${props => props.checked ? '500' : '400'};
+    color: ${props => props.$checked ? props.theme.colors.primary : props.theme.colors.text};
+    font-weight: ${props => props.$checked ? '500' : '400'};
   }
   
   &:hover {

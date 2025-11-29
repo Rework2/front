@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
-
   * {
     box-sizing: border-box;
     margin: 0;
@@ -10,15 +9,23 @@ export const GlobalStyles = createGlobalStyle`
 
   html {
     font-size: 16px;
+    height: 100%;
   }
 
   body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
-    background-color: #ffffff;
+    background: linear-gradient(#F8FBFF, #FFFFFF);
     color: #0F172A;
     line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    height: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    height: 100%;
   }
 
   h1 {
@@ -79,3 +86,5 @@ export const GlobalStyles = createGlobalStyle`
     height: auto;
   }
 `;
+
+export default GlobalStyles;
