@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   DEFAULT_ACTIVITY_TYPES,
-  DEFAULT_ACTIVITIES,
   COLOR_PALETTE,
 } from "../components/roadmappage/constants";
 import { generatePastelColor, createSlug } from "../components/roadmappage/utils";
@@ -13,6 +12,9 @@ import { InlineAddForm } from "../components/roadmappage/InlineAddForm";
 import { AddActivityForm } from "../components/roadmappage/AddActivityForm";
 import { TimelineHeader } from "../components/roadmappage/TimelineHeader";
 import { TimelineRow } from "../components/roadmappage/TimelineRow";
+import { roadmapApi } from "../api/roadmap";
+import { getDefaultActivitiesForTargetJob } from "../components/roadmappage/utils";
+import "../styles/RoadmapPage.css";
 
 const X = () => <span>×</span>;
 const Plus = () => <span>+</span>;
@@ -20,43 +22,18 @@ const Calendar = () => <span>📅</span>;
 const ChevronLeft = () => <span>‹</span>;
 const ChevronRight = () => <span>›</span>;
 
-const FALLBACK_YEAR = new Date().getFullYear();
-
-const getDefaultActivitiesFromStorage = () => {
-  try {
-    const stored = localStorage.getItem("roadmap_defaultActivities");
-    return stored ? JSON.parse(stored) : null;
-  } catch {
-    return null;
-  }
-};
-
-const hydrateDefaultActivities = (items) =>
-  (items || []).map((activity, index) => ({
-    id: `default-${activity.id || index}`,
-    typeId: activity.type || activity.id || "competition",
-    title: activity.label || "기본 활동",
-    tags: [],
-    isImportant: false,
-    startYear: activity.startYear || FALLBACK_YEAR,
-    startMonth: activity.startMonth || 1,
-    endYear: activity.endYear || activity.startYear || FALLBACK_YEAR,
-    endMonth: activity.endMonth || activity.startMonth || 1,
-  }));
-
-function RoadmapPage() {
-
+export function RoadmapPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [activityTypes, setActivityTypes] = useState(DEFAULT_ACTIVITY_TYPES);
   const [selectedActivityTypes, setSelectedActivityTypes] = useState(
-    DEFAULT_ACTIVITY_TYPES.map((type) => type.id)
+    new Set(DEFAULT_ACTIVITY_TYPES.map((t) => t.id))
   );
-  const [activities, setActivities] = useState(() => {
-    const stored = getDefaultActivitiesFromStorage();
-    return hydrateDefaultActivities(
-      stored && stored.length > 0 ? stored : DEFAULT_ACTIVITIES
-    );
-  });
+
+  // Data state
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [monthRange, setMonthRange] = useState({ start: 1, end: 12 });
   const [selectedTags, setSelectedTags] = useState(["IT", "프로젝트", "React"]);
   const [activeSlider, setActiveSlider] = useState(null);
@@ -76,15 +53,55 @@ function RoadmapPage() {
     endMonth: 8,
   });
 
+  // Fetch activities on mount
   useEffect(() => {
-    const handleStorageChange = () => {
-      const stored = getDefaultActivitiesFromStorage();
-      if (stored && stored.length > 0) {
-        setActivities(hydrateDefaultActivities(stored));
+    const fetchActivities = async () => {
+      try {
+        setLoading(true);
+        let data = await roadmapApi.getRoadmap();
+
+        // If roadmap is empty, try to initialize from onboarding data
+        if (!data || data.length === 0) {
+          const onboardingData = localStorage.getItem("rework_onboarding");
+          if (onboardingData) {
+            try {
+              const parsed = JSON.parse(onboardingData);
+              const { targetJob, preferredActivities } = parsed.formData || {};
+
+              if (targetJob && preferredActivities) {
+                // Generate realistic activities based on career data
+                const generatedActivities = getDefaultActivitiesForTargetJob(targetJob);
+
+                // Filter based on user's preferred activity types
+                const initialActivities = generatedActivities.filter(activity =>
+                  preferredActivities.includes(activity.type)
+                ).map(activity => ({
+                  ...activity,
+                  isImportant: true,
+                  tags: ["추천", "AI 제안"],
+                }));
+
+                if (initialActivities.length > 0) {
+                  // Save to API
+                  await roadmapApi.initializeRoadmap(initialActivities);
+                  data = initialActivities;
+                }
+              }
+            } catch (e) {
+              console.error("Failed to parse onboarding data:", e);
+            }
+          }
+        }
+
+        setActivities(data);
+      } catch (err) {
+        console.error("Failed to fetch roadmap:", err);
+        setError("로드맵 데이터를 불러오는데 실패했습니다.");
+      } finally {
+        setLoading(false);
       }
     };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    fetchActivities();
   }, []);
 
   useEffect(() => {
@@ -227,7 +244,7 @@ function RoadmapPage() {
     setIsAddingType(false);
   };
 
-  const handleAddActivity = (event) => {
+  const handleAddActivity = async (event) => {
     event.preventDefault();
 
     const title = newActivity.title.trim();
@@ -258,8 +275,7 @@ function RoadmapPage() {
       .map((tag) => tag.trim())
       .filter(Boolean);
 
-    const createdActivity = {
-      id: `activity-${Date.now()}`,
+    const activityPayload = {
       typeId: newActivity.typeId,
       title,
       tags,
@@ -270,26 +286,49 @@ function RoadmapPage() {
       endMonth,
     };
 
-    setActivities((prev) => [...prev, createdActivity]);
-    setSelectedActivityTypes((prev) =>
-      prev.includes(newActivity.typeId) ? prev : [...prev, newActivity.typeId]
-    );
-    setNewActivity({
-      typeId: newActivity.typeId,
-      title: "",
-      tags: "",
-      isImportant: false,
-      startYear,
-      startMonth,
-      endYear,
-      endMonth,
-    });
-    setIsAddingActivity(false);
+    try {
+      const createdActivity = await roadmapApi.createActivity(activityPayload);
+      setActivities((prev) => [...prev, createdActivity]);
+
+      setSelectedActivityTypes((prev) =>
+        prev.includes(newActivity.typeId) ? prev : [...prev, newActivity.typeId]
+      );
+      setNewActivity({
+        typeId: newActivity.typeId,
+        title: "",
+        tags: "",
+        isImportant: false,
+        startYear,
+        startMonth,
+        endYear,
+        endMonth,
+      });
+      setIsAddingActivity(false);
+    } catch (err) {
+      console.error("Failed to create activity:", err);
+      alert("활동을 추가하는데 실패했습니다.");
+    }
   };
 
   const matchingTagSet = useMemo(() => new Set(selectedTags), [selectedTags]);
   const incrementYear = () => setSelectedYear((prev) => prev + 1);
   const decrementYear = () => setSelectedYear((prev) => prev - 1);
+
+  if (loading) {
+    return (
+      <div className="roadmap-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>로드맵을 불러오는 중입니다...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="roadmap-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="roadmap-page">
@@ -417,4 +456,4 @@ function RoadmapPage() {
   );
 }
 
-export default RoadmapPage;
+
