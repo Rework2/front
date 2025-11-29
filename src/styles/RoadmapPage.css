@@ -1,9 +1,6 @@
-/* RoadmapPage.css */
-
 .roadmap-page {
     min-height: 100vh;
     background-color: #f8fafc;
-    /* slate-50 */
     padding: 2rem;
     font-family: 'Inter', sans-serif;
 }
@@ -19,10 +16,8 @@
 
 .roadmap-page__title {
     font-size: 1.875rem;
-    /* 30px */
     font-weight: 700;
     color: #0f172a;
-    /* slate-900 */
     margin-bottom: 1rem;
 }
 
@@ -40,7 +35,6 @@
     align-items: flex-start;
 }
 
-/* Category Tags */
 .roadmap-page__category-tags {
     display: flex;
     flex-wrap: wrap;
@@ -66,7 +60,6 @@
     color: #0f172a;
 }
 
-/* Year Control */
 .year-control {
     display: flex;
     align-items: center;
@@ -108,7 +101,6 @@
     text-align: center;
 }
 
-/* Sidebar / Filter Panel */
 .filter-panel {
     width: 300px;
     flex-shrink: 0;
@@ -117,7 +109,6 @@
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
-    /* slate-200 */
 }
 
 .filter-title {
@@ -140,7 +131,6 @@
     margin-bottom: 0.75rem;
 }
 
-/* Month Range Slider */
 .month-range {
     padding: 0 0.5rem;
 }
@@ -167,7 +157,6 @@
     top: 0;
     bottom: 0;
     background: #3b82f6;
-    /* blue-500 */
     border-radius: 2px;
 }
 
@@ -201,7 +190,6 @@
     color: #64748b;
 }
 
-/* Activity Type List */
 .activity-type-list {
     display: flex;
     flex-direction: column;
@@ -232,7 +220,6 @@
     color: #334155;
 }
 
-/* Inline Add Form */
 .inline-add-form {
     background: #f8fafc;
     padding: 0.75rem;
@@ -278,12 +265,10 @@
 .importance-description {
     font-size: 0.875rem;
     color: #94a3b8;
-    /* slate-400 */
     margin-bottom: 1rem;
     line-height: 1.5;
 }
 
-/* Buttons */
 .add-button {
     display: flex;
     align-items: center;
@@ -312,17 +297,13 @@
 .add-button--block {
     width: 100%;
     background-color: #eff6ff;
-    /* blue-50 */
     color: #2563eb;
-    /* blue-600 */
 }
 
 .add-button--block:hover {
     background-color: #dbeafe;
-    /* blue-100 */
 }
 
-/* Add Activity Form (Card) */
 .add-activity-card {
     background: white;
     border: 1px solid #e2e8f0;
@@ -438,7 +419,6 @@
     background: #f8fafc;
 }
 
-/* Main Content */
 .main-content {
     flex: 1;
     background: white;
@@ -451,7 +431,6 @@
 
 .timeline-container {
     min-width: 800px;
-    /* Ensure horizontal scroll on small screens */
 }
 
 .timeline-header {
@@ -473,7 +452,6 @@
     align-items: center;
     padding: 1rem 0;
     border-bottom: 1px solid #f1f5f9;
-    /* slate-100 */
 }
 
 .timeline-row:last-child {
@@ -484,14 +462,12 @@
     font-size: 0.875rem;
     font-weight: 600;
     color: #334155;
-    /* slate-700 */
     padding-right: 1rem;
 }
 
 .timeline-row__placeholder {
     grid-column: 2 / -1;
     color: #cbd5e1;
-    /* slate-300 */
     font-size: 0.875rem;
     text-align: center;
     padding: 0.5rem;
@@ -503,6 +479,109 @@
     padding: 0 2px;
 }
 
+.activity-bar {
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.activity-bar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.activity-bar--matched {
+    border: 2px solid #3b82f6;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.activity-bar__content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    overflow: hidden;
+}
+
+.activity-bar__star {
+    color: #fbbf24;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.activity-bar__title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.activity-bar .tooltip-content {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-0.5rem);
+    background: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    min-width: 200px;
+    max-width: 300px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000;
+    margin-bottom: 0.5rem;
+}
+
+.activity-bar:hover .tooltip-content {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.tooltip-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+.tooltip-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.tooltip-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.tooltip-tag {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
 .timeline-empty {
     text-align: center;
     padding: 3rem;
@@ -510,7 +589,6 @@
     font-size: 0.875rem;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
     .roadmap-page__content-wrapper {
         flex-direction: column;

@@ -1,5 +1,11 @@
 import { formatPeriod } from "./utils";
 
+/**
+ * 타임라인에 표시되는 활동 바 컴포넌트
+ * @param {Object} activity - 활동 데이터
+ * @param {Object} activityType - 활동 타입 정보
+ * @param {Set} matchingTagSet - 매칭된 태그 Set
+ */
 export function ActivityBar({ activity, activityType, matchingTagSet }) {
   const hasMatchingTag = activity.tags.some((tag) => matchingTagSet.has(tag));
 

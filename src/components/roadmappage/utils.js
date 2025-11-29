@@ -95,14 +95,28 @@ export function getRandomItem(arr) {
 }
 
 /**
- * 타겟 직무에 맞는 기본 활동을 생성한다.
- * competition / certification / extracurricular / internship 만 자동 생성한다.
- * @param {string} targetJob
- * @returns {Array<{id: string, type: string, label: string, startYear?: number|string, startMonth?: number|string, endYear?: number|string, endMonth?: number|string}>}
+ * OpenAI 파일 ID 반환
+ * @returns {string|null} careerFileId
  */
-export function getDefaultActivitiesForTargetJob(targetJob) {
+export function getCareerFileId() {
+  return openaiFiles?.careerFileId || null;
+}
+
+/**
+ * AI를 사용하여 targetJob과 careerData.json을 기반으로 각 activityType에 맞는 항목을 1개씩 반환한다.
+ * @param {string} targetJob - 희망 직무
+ * @param {string[]} activityTypes - 선택한 활동 타입 배열 (예: ["competition", "certification", "internship"])
+ * @returns {Promise<Array<{id: string, type: string, typeId: string, label: string, startYear?: number, startMonth?: number, endYear?: number, endMonth?: number}>>}
+ */
+/**
+ * careerData.json을 기반으로 각 activityType별로 1개씩 활동을 선택하여 반환
+ * @param {string} targetJob - 희망 직무
+ * @param {string[]} activityTypes - 선택한 활동 타입 배열
+ * @returns {Promise<Array>} 각 타입별로 1개씩 선택된 활동 배열
+ */
+export async function getAIRecommendedActivities(targetJob, activityTypes) {
   const careerKey = mapTargetJobToCareerKey(targetJob);
-  if (!careerKey) {
+  if (!careerKey || !activityTypes || activityTypes.length === 0) {
     return [];
   }
 
@@ -111,32 +125,103 @@ export function getDefaultActivitiesForTargetJob(targetJob) {
     return [];
   }
 
-  /** @type {("competition"|"certification"|"extracurricular"|"internship")[]} */
-  const candidateIds = ["competition", "certification", "extracurricular", "internship"];
-  /** @type {Array<{id: string, type: string, label: string, startYear?: number|string, startMonth?: number|string, endYear?: number|string, endMonth?: number|string}>} */
-  const result = [];
+  const availableActivityTypes = activityTypes.filter(activityType => 
+    jobData[activityType] && Array.isArray(jobData[activityType]) && jobData[activityType].length > 0
+  );
 
-  for (const id of candidateIds) {
-    const list = jobData[id];
-    if (!list || list.length === 0) continue;
+  if (availableActivityTypes.length === 0) {
+    return [];
+  }
+
+  const relevantData = {};
+  for (const activityType of availableActivityTypes) {
+    if (jobData[activityType] && Array.isArray(jobData[activityType])) {
+      relevantData[activityType] = jobData[activityType];
+    }
+  }
+
+  if (Object.keys(relevantData).length === 0) {
+    return [];
+  }
+
+  /**
+   * 각 activityType별로 직접 1개씩 선택
+   */
+  const selectOnePerType = () => {
+    const currentYear = new Date().getFullYear();
+    const result = [];
+
+    for (const activityType of availableActivityTypes) {
+      const typeData = relevantData[activityType];
+      if (!typeData || !Array.isArray(typeData) || typeData.length === 0) {
+        continue;
+      }
+
+      const selectedItem = getRandomItem(typeData) || typeData[0];
+      if (!selectedItem) {
+        continue;
+      }
+
+      result.push({
+        id: `ai-${activityType}-${Date.now()}-${Math.random()}`,
+        type: activityType,
+        typeId: activityType,
+        label: selectedItem.label,
+        title: selectedItem.label,
+        startYear: selectedItem.startYear ?? currentYear,
+        startMonth: selectedItem.startMonth ?? 1,
+        endYear: selectedItem.endYear ?? currentYear,
+        endMonth: selectedItem.endMonth ?? 12,
+      });
+    }
+
+    return result;
+  };
+
+  return selectOnePerType();
+}
+
+/**
+ * 타겟 직무와 활동 타입에 맞는 기본 활동을 생성 (랜덤 선택)
+ * @param {string} targetJob - 희망 직무
+ * @param {string[]} activityTypes - 활동 타입 배열
+ * @returns {Array} 각 타입별로 1개씩 선택된 활동 배열
+ */
+export function getDefaultActivitiesForTargetJobWithTypes(targetJob, activityTypes) {
+  const careerKey = mapTargetJobToCareerKey(targetJob);
+  if (!careerKey || !activityTypes || activityTypes.length === 0) {
+    return [];
+  }
+
+  const jobData = careerData[careerKey];
+  if (!jobData) {
+    return [];
+  }
+
+  const result = [];
+  const currentYear = new Date().getFullYear();
+
+  for (const activityType of activityTypes) {
+    const list = jobData[activityType];
+    if (!list || !Array.isArray(list) || list.length === 0) {
+      continue;
+    }
 
     const picked = getRandomItem(list);
     if (!picked) continue;
 
     result.push({
-      id,
-      type: id,
+      id: `${activityType}-${Date.now()}-${Math.random()}`,
+      type: activityType,
+      typeId: activityType,
       label: picked.label,
-      startYear: picked.startYear ?? "",
-      startMonth: picked.startMonth ?? "",
-      endYear: picked.endYear ?? "",
-      endMonth: picked.endMonth ?? "",
+      title: picked.label,
+      startYear: picked.startYear ?? currentYear,
+      startMonth: picked.startMonth ?? 1,
+      endYear: picked.endYear ?? currentYear,
+      endMonth: picked.endMonth ?? 12,
     });
   }
 
   return result;
-}
-
-export function getCareerFileId() {
-  return openaiFiles?.careerFileId || null;
 }

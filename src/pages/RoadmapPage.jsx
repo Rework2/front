@@ -13,7 +13,8 @@ import { AddActivityForm } from "../components/roadmappage/AddActivityForm";
 import { TimelineHeader } from "../components/roadmappage/TimelineHeader";
 import { TimelineRow } from "../components/roadmappage/TimelineRow";
 import { roadmapApi } from "../api/roadmap";
-import { getDefaultActivitiesForTargetJob } from "../components/roadmappage/utils";
+import { getAIRecommendedActivities, getDefaultActivitiesForTargetJobWithTypes, mapTargetJobToCareerKey } from "../components/roadmappage/utils";
+import careerData from "../components/roadmappage/careerData.json";
 import "../styles/RoadmapPage.css";
 
 const X = () => <span>×</span>;
@@ -23,18 +24,79 @@ const ChevronLeft = () => <span>‹</span>;
 const ChevronRight = () => <span>›</span>;
 
 export function RoadmapPage() {
+  /**
+   * Onboarding 데이터에서 초기값 가져오기
+   * @returns {Object} 온보딩 폼 데이터
+   */
+  const getOnboardingData = () => {
+    try {
+      const onboardingData = localStorage.getItem("rework_onboarding");
+      if (onboardingData) {
+        const parsed = JSON.parse(onboardingData);
+        return parsed.formData || {};
+      }
+    } catch (e) {
+      console.error("Failed to parse onboarding data:", e);
+    }
+    return {};
+  };
+
+  const onboardingData = getOnboardingData();
+  const { preferredActivities = [], preparationPeriod = "" } = onboardingData;
+
+  /**
+   * preferredActivities에 따라 activityTypes 필터링
+   * @returns {Array} 필터링된 활동 타입 배열
+   */
+  const getInitialActivityTypes = () => {
+    if (preferredActivities.length > 0) {
+      return DEFAULT_ACTIVITY_TYPES.filter((type) =>
+        preferredActivities.includes(type.id)
+      );
+    }
+    return DEFAULT_ACTIVITY_TYPES;
+  };
+
+  /**
+   * preparationPeriod에 따라 monthRange 설정
+   * @returns {{start: number, end: number}} 월 범위 객체
+   */
+  const getInitialMonthRange = () => {
+    const currentMonth = new Date().getMonth() + 1;
+    
+    switch (preparationPeriod) {
+      case "3months":
+        return {
+          start: currentMonth,
+          end: Math.min(12, currentMonth + 2),
+        };
+      case "6months":
+        return {
+          start: currentMonth,
+          end: Math.min(12, currentMonth + 5),
+        };
+      case "12months":
+        return { start: 1, end: 12 };
+      case "flexible":
+      default:
+        return { start: 1, end: 12 };
+    }
+  };
+
+  const initialActivityTypes = getInitialActivityTypes();
+  const initialMonthRange = getInitialMonthRange();
+
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [activityTypes, setActivityTypes] = useState(DEFAULT_ACTIVITY_TYPES);
+  const [activityTypes, setActivityTypes] = useState(initialActivityTypes);
   const [selectedActivityTypes, setSelectedActivityTypes] = useState(
-    new Set(DEFAULT_ACTIVITY_TYPES.map((t) => t.id))
+    initialActivityTypes.map((t) => t.id)
   );
 
-  // Data state
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [monthRange, setMonthRange] = useState({ start: 1, end: 12 });
+  const [monthRange, setMonthRange] = useState(initialMonthRange);
   const [selectedTags, setSelectedTags] = useState(["IT", "프로젝트", "React"]);
   const [activeSlider, setActiveSlider] = useState(null);
   const [isAddingType, setIsAddingType] = useState(false);
@@ -53,47 +115,83 @@ export function RoadmapPage() {
     endMonth: 8,
   });
 
-  // Fetch activities on mount
+  /**
+   * 컴포넌트 마운트 시 활동 데이터 로드 및 초기화
+   */
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         setLoading(true);
         let data = await roadmapApi.getRoadmap();
 
-        // If roadmap is empty, try to initialize from onboarding data
-        if (!data || data.length === 0) {
-          const onboardingData = localStorage.getItem("rework_onboarding");
-          if (onboardingData) {
-            try {
-              const parsed = JSON.parse(onboardingData);
-              const { targetJob, preferredActivities } = parsed.formData || {};
+        const onboardingData = localStorage.getItem("rework_onboarding");
+        let shouldInitialize = false;
+        let targetJob = null;
+        let userPreferredActivities = [];
 
-              if (targetJob && preferredActivities) {
-                // Generate realistic activities based on career data
-                const generatedActivities = getDefaultActivitiesForTargetJob(targetJob);
+        if (onboardingData) {
+          try {
+            const parsed = JSON.parse(onboardingData);
+            targetJob = parsed.formData?.targetJob;
+            userPreferredActivities = parsed.formData?.preferredActivities || [];
 
-                // Filter based on user's preferred activity types
-                const initialActivities = generatedActivities.filter(activity =>
-                  preferredActivities.includes(activity.type)
-                ).map(activity => ({
-                  ...activity,
-                  isImportant: true,
-                  tags: ["추천", "AI 제안"],
-                }));
+            if (!data || data.length === 0) {
+              shouldInitialize = true;
+            } else {
+              const existingTypes = new Set(data.map(d => d.type || d.typeId));
+              const careerKey = mapTargetJobToCareerKey(targetJob);
+              const expectedTypes = careerKey && careerData[careerKey]
+                ? userPreferredActivities.filter(type => 
+                    careerData[careerKey][type] && 
+                    Array.isArray(careerData[careerKey][type]) && 
+                    careerData[careerKey][type].length > 0
+                  )
+                : [];
 
-                if (initialActivities.length > 0) {
-                  // Save to API
-                  await roadmapApi.initializeRoadmap(initialActivities);
-                  data = initialActivities;
-                }
+              const missingTypes = expectedTypes.filter(type => !existingTypes.has(type));
+              
+              if (missingTypes.length > 0 || existingTypes.size < expectedTypes.length) {
+                shouldInitialize = true;
               }
-            } catch (e) {
-              console.error("Failed to parse onboarding data:", e);
             }
+          } catch (e) {
+            console.error("Failed to parse onboarding data:", e);
           }
         }
 
-        setActivities(data);
+        if (shouldInitialize && targetJob && userPreferredActivities.length > 0) {
+          try {
+            let aiRecommendedActivities = [];
+            try {
+              aiRecommendedActivities = await getAIRecommendedActivities(
+                targetJob,
+                userPreferredActivities
+              );
+            } catch (aiError) {
+              aiRecommendedActivities = getDefaultActivitiesForTargetJobWithTypes(
+                targetJob,
+                userPreferredActivities
+              );
+            }
+
+            const initialActivities = aiRecommendedActivities.map(activity => ({
+              ...activity,
+              title: activity.title || activity.label,
+              typeId: activity.typeId || activity.type,
+              isImportant: true,
+              tags: Array.isArray(activity.tags) ? activity.tags : ["추천", "AI 제안"],
+            }));
+
+            if (initialActivities.length > 0) {
+              await roadmapApi.initializeRoadmap(initialActivities);
+              data = initialActivities;
+            }
+          } catch (e) {
+            console.error("Failed to initialize roadmap:", e);
+          }
+        }
+
+        setActivities(data || []);
       } catch (err) {
         console.error("Failed to fetch roadmap:", err);
         setError("로드맵 데이터를 불러오는데 실패했습니다.");
@@ -104,6 +202,9 @@ export function RoadmapPage() {
     fetchActivities();
   }, []);
 
+  /**
+   * activityTypes 변경 시 newActivity의 typeId 업데이트
+   */
   useEffect(() => {
     setNewActivity((prev) => {
       if (activityTypes.length === 0) {
@@ -116,6 +217,9 @@ export function RoadmapPage() {
     });
   }, [activityTypes]);
 
+  /**
+   * selectedYear 변경 시 newActivity의 연도 업데이트
+   */
   useEffect(() => {
     setNewActivity((prev) => ({
       ...prev,
@@ -124,6 +228,9 @@ export function RoadmapPage() {
     }));
   }, [selectedYear]);
 
+  /**
+   * 선택된 월 범위에 해당하는 월 배열 생성
+   */
   const visibleMonths = useMemo(() => {
     const months = [];
     for (let month = monthRange.start; month <= monthRange.end; month += 1) {
@@ -132,25 +239,29 @@ export function RoadmapPage() {
     return months;
   }, [monthRange]);
 
+  /**
+   * 선택된 활동 타입을 Set으로 변환 (빠른 조회를 위해)
+   */
   const selectedTypeSet = useMemo(
     () => new Set(selectedActivityTypes),
     [selectedActivityTypes]
   );
 
+  /**
+   * 타임라인에 표시할 행 데이터 계산
+   * 선택된 활동 타입, 연도, 월 범위에 맞는 활동들을 필터링하고 위치 정보 추가
+   */
   const timelineRows = useMemo(() => {
     return activityTypes
       .filter((type) => selectedTypeSet.has(type.id))
       .map((type) => {
         const typeActivities = activities
-          .filter((activity) => activity.typeId === type.id)
-          .filter(
-            (activity) =>
-              activity.startYear <= selectedYear && activity.endYear >= selectedYear
+          .filter((activity) => activity.typeId === type.id || activity.type === type.id)
+          .filter((activity) => 
+            activity.startYear <= selectedYear && activity.endYear >= selectedYear
           )
-          .filter(
-            (activity) =>
-              activity.startMonth <= monthRange.end &&
-              activity.endMonth >= monthRange.start
+          .filter((activity) => 
+            activity.startMonth <= monthRange.end && activity.endMonth >= monthRange.start
           )
           .map((activity) => {
             const adjustedStart = Math.max(activity.startMonth, monthRange.start);
@@ -179,10 +290,16 @@ export function RoadmapPage() {
       });
   }, [activityTypes, selectedTypeSet, activities, monthRange, visibleMonths, selectedYear]);
 
+  /**
+   * 선택된 태그 제거
+   */
   const handleRemoveTag = (tag) => {
     setSelectedTags((prev) => prev.filter((item) => item !== tag));
   };
 
+  /**
+   * 새로운 카테고리 태그 추가
+   */
   const handleAddCategoryTag = () => {
     const value = newCategoryTag.trim();
     if (!value || selectedTags.includes(value)) {
@@ -193,6 +310,9 @@ export function RoadmapPage() {
     setIsAddingTag(false);
   };
 
+  /**
+   * 월 범위 슬라이더 변경 핸들러
+   */
   const handleMonthChange = (key, value) => {
     const numericValue = Number(value);
     setMonthRange((prev) => {
@@ -205,6 +325,9 @@ export function RoadmapPage() {
     });
   };
 
+  /**
+   * 활동 타입 선택 토글
+   */
   const toggleTypeSelection = (typeId) => {
     setSelectedActivityTypes((prev) => {
       if (prev.includes(typeId)) {
@@ -214,6 +337,9 @@ export function RoadmapPage() {
     });
   };
 
+  /**
+   * 새로운 활동 타입 추가
+   */
   const handleAddActivityType = () => {
     const trimmed = newTypeName.trim();
     if (!trimmed) {
@@ -244,6 +370,9 @@ export function RoadmapPage() {
     setIsAddingType(false);
   };
 
+  /**
+   * 새로운 활동 추가 핸들러
+   */
   const handleAddActivity = async (event) => {
     event.preventDefault();
 
@@ -310,8 +439,19 @@ export function RoadmapPage() {
     }
   };
 
+  /**
+   * 선택된 태그를 Set으로 변환 (빠른 조회를 위해)
+   */
   const matchingTagSet = useMemo(() => new Set(selectedTags), [selectedTags]);
+  
+  /**
+   * 연도 증가
+   */
   const incrementYear = () => setSelectedYear((prev) => prev + 1);
+  
+  /**
+   * 연도 감소
+   */
   const decrementYear = () => setSelectedYear((prev) => prev - 1);
 
   if (loading) {
@@ -455,5 +595,3 @@ export function RoadmapPage() {
     </div>
   );
 }
-
-
