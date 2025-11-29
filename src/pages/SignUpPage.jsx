@@ -3,6 +3,7 @@ import { Button, Label, AlertDescription } from "../components/common";
 import { Brain, Lock, Mail, Calendar, ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import * as S from "../styles/SignUpPage.styles";
+import { authApi } from "../api/auth";
 
 export function SignUpPage() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export function SignUpPage() {
   const [errors, setErrors] = useState({});
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -62,7 +64,7 @@ export function SignUpPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -74,11 +76,25 @@ export function SignUpPage() {
       return;
     }
 
-    // 회원가입 성공 - 온보딩으로 이동
-    setShowSuccess(true);
-    setTimeout(() => {
-      navigate("/onboarding");
-    }, 1500);
+    try {
+      setLoading(true);
+      await authApi.signup({
+        email: formData.email,
+        password: formData.password,
+        birthDate: formData.birthDate,
+      });
+
+      // 회원가입 성공 - 온보딩으로 이동
+      setShowSuccess(true);
+      setTimeout(() => {
+        navigate("/onboarding");
+      }, 1500);
+    } catch (err) {
+      console.error("Signup failed:", err);
+      alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (field, value) => {

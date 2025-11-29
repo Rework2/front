@@ -5,9 +5,9 @@ import { LoginPage } from "../pages/LoginPage";
 import { SignUpPage } from "../pages/SignUpPage";
 import { OnboardingPage } from "../pages/OnboardingPage";
 import { DashboardPage } from "../pages/DashboardPage";
-// import { RoadmapPage } from "../pages/RoadmapPage";
+import { RoadmapPage } from "../pages/RoadmapPage";
 // import { ActivityManagementHub } from "../components/Activity/ActivityManagementHub";
-// import { GrowthInsightDashboard } from "../components/DashBoard/GrowthInsightDashboard";
+import { GrowthInsightDashboard } from "../components/Layout/GrowthInsightDashboard";
 import { DashboardLayout } from "../components/Layout/DashboardLayout";
 
 export const Router = createBrowserRouter([
@@ -35,18 +35,18 @@ export const Router = createBrowserRouter([
                 path: "/dashboard",
                 element: <DashboardLayout currentPage="dashboard"><DashboardPage /></DashboardLayout>,
             },
-            // {
-            //     path: "/roadmap",
-            //     element: <DashboardLayout currentPage="roadmap"><RoadmapPage /></DashboardLayout>,
-            // },
+            {
+                path: "/roadmap",
+                element: <DashboardLayout currentPage="roadmap"><RoadmapPage /></DashboardLayout>,
+            },
             // {
             //     path: "/activities",
             //     element: <DashboardLayout currentPage="activities"><ActivityManagementHub /></DashboardLayout>,
             // },
-            // {
-            //     path: "/growth",
-            //     element: <DashboardLayout currentPage="growth"><GrowthInsightDashboard /></DashboardLayout>,
-            // },
+            {
+                path: "/growth",
+                element: <DashboardLayout currentPage="growth"><GrowthInsightDashboard /></DashboardLayout>,
+            },
         ],
     },
 ]);

@@ -13,45 +13,12 @@ import {
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import * as S from "../styles/DashboardPage.styles";
-
-// 온보딩 데이터 저장 키 (둘 다 시도)
-const ONBOARDING_KEYS = ["reworkOnboardingData", "reworkOnboarding"];
-
-function loadOnboardingData() {
-  if (typeof window === "undefined") return null;
-
-  for (const key of ONBOARDING_KEYS) {
-    const raw = window.localStorage.getItem(key);
-    if (raw) {
-      try {
-        return JSON.parse(raw);
-      } catch (e) {
-        console.error("Failed to parse onboarding data:", e);
-      }
-    }
-  }
-  return null;
-}
-
-function calculateProgress(data) {
-  if (!data) return 0;
-
-  let completed = 0;
-  const total = 4; // major, targetJob, preparationPeriod, preferredActivities
-
-  if (data.major) completed++;
-  if (data.targetJob) completed++;
-  if (data.preparationPeriod) completed++;
-  if (Array.isArray(data.preferredActivities) && data.preferredActivities.length > 0) {
-    completed++;
-  }
-
-  return Math.round((completed / total) * 100);
-}
+import { dashboardApi } from "../api/dashboard";
 
 export function DashboardPage() {
-  const [onboardingData, setOnboardingData] = useState(null);
-  const [progress, setProgress] = useState(0);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // 라우터 네비게이션 훅
   const navigate = useNavigate();
@@ -66,28 +33,46 @@ export function DashboardPage() {
     navigate("/activities");
   };
 
-  // Progress chart data (예시 + 마지막 값은 실제 progress 반영)
-  const progressData = [
-    { month: "7월", progress: 20 },
-    { month: "8월", progress: 35 },
-    { month: "9월", progress: 50 },
-    { month: "10월", progress: 65 },
-    { month: "11월", progress: progress || 75 },
-  ];
-
   useEffect(() => {
-    const data = loadOnboardingData();
-    if (data) {
-      setOnboardingData(data);
-      setProgress(calculateProgress(data));
-    } else {
-      setOnboardingData(null);
-      setProgress(0);
-    }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await dashboardApi.getDashboardData();
+        setDashboardData(data);
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+        setError("데이터를 불러오는데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const majorLabel = onboardingData?.major || "전공 미설정";
-  const jobLabel = onboardingData?.targetJob || "희망 직무 미설정";
+  if (loading) {
+    return (
+      <S.PageContainer>
+        <S.Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+          <p>데이터를 불러오는 중입니다...</p>
+        </S.Container>
+      </S.PageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <S.PageContainer>
+        <S.Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+          <p>{error}</p>
+        </S.Container>
+      </S.PageContainer>
+    );
+  }
+
+  const { progress, stats, chartData, user, aiInsight } = dashboardData;
+  const majorLabel = user?.major || "전공 미설정";
+  const jobLabel = user?.targetJob || "희망 직무 미설정";
 
   return (
     <S.PageContainer>
@@ -96,12 +81,8 @@ export function DashboardPage() {
           <h1>대시보드</h1>
           <p>
             포트폴리오 준비 현황을 한눈에 확인하세요
-            {onboardingData && (
-              <>
-                <br />
-                현재 설정: {majorLabel} / {jobLabel}
-              </>
-            )}
+            <br />
+            현재 설정: {majorLabel} / {jobLabel}
           </p>
         </S.Header>
 
@@ -125,7 +106,7 @@ export function DashboardPage() {
             <S.StatHeader>
               <S.StatInfo>
                 <p>완료 활동</p>
-                <h3>4개</h3>
+                <h3>{stats.completed}개</h3>
               </S.StatInfo>
               <S.StatIcon $bgColor="rgb(220 252 231)">
                 <CheckCircle style={{ width: "1.5rem", height: "1.5rem", color: "#10B981" }} />
@@ -137,7 +118,7 @@ export function DashboardPage() {
             <S.StatHeader>
               <S.StatInfo>
                 <p>진행 중</p>
-                <h3>2개</h3>
+                <h3>{stats.inProgress}개</h3>
               </S.StatInfo>
               <S.StatIcon $bgColor="rgb(219 234 254)">
                 <PlayCircle style={{ width: "1.5rem", height: "1.5rem", color: "#3B82F6" }} />
@@ -149,7 +130,7 @@ export function DashboardPage() {
             <S.StatHeader>
               <S.StatInfo>
                 <p>예정</p>
-                <h3>3개</h3>
+                <h3>{stats.upcoming}개</h3>
               </S.StatInfo>
               <S.StatIcon $bgColor="rgb(254 249 195)">
                 <Clock style={{ width: "1.5rem", height: "1.5rem", color: "#EAB308" }} />
@@ -177,7 +158,7 @@ export function DashboardPage() {
                 </Button>
               </S.CardHeader>
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={progressData}>
+                <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis
                     dataKey="month"
@@ -242,18 +223,7 @@ export function DashboardPage() {
                 <h3>AI 인사이트</h3>
               </div>
               <p style={{ marginBottom: "1rem" }}>
-                {onboardingData ? (
-                  <>
-                    {majorLabel} 전공, {jobLabel} 목표 기준으로 현재 준비 수준은{" "}
-                    {progress}% 입니다. 입력 정보를 바탕으로 로드맵과 활동 구성이
-                    최적화됩니다.
-                  </>
-                ) : (
-                  <>
-                    아직 온보딩 정보가 부족합니다. 전공, 직무, 준비 기간, 관심
-                    활동을 입력하면 맞춤형 로드맵과 인사이트를 제공합니다.
-                  </>
-                )}
+                {aiInsight}
               </p>
               <Button
                 style={{ width: "100%", background: "white", color: "#2A5EE4" }}

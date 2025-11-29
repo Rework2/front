@@ -3,6 +3,7 @@ import { Button, Label, Alert, AlertDescription } from "../components/common";
 import { Brain, Lock, Mail, AlertCircle, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import * as S from "../styles/LoginPage.styles";
+import { authApi } from "../api/auth";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -32,7 +34,7 @@ export function LoginPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError("");
 
@@ -40,13 +42,15 @@ export function LoginPage() {
       return;
     }
 
-    // 임시 로그인 로직 (실제로는 백엔드 API 호출)
-    // 데모용으로 간단한 체크
-    if (email === "demo@rework.com" && password === "demo123") {
-      // 로그인 성공 - 대시보드로 이동
+    try {
+      setLoading(true);
+      await authApi.login(email, password);
       navigate("/dashboard");
-    } else {
-      setLoginError("이메일 또는 비밀번호가 올바르지 않습니다.");
+    } catch (err) {
+      console.error("Login failed:", err);
+      setLoginError(err.message || "이메일 또는 비밀번호가 올바르지 않습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 

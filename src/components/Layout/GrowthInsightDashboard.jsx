@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Button, Card as BaseCard, Badge, Flex, Grid } from "../Styles/StyledComponents";
+import { Button, Card as BaseCard, Badge, Flex, Grid } from "../Layout/StyledComponents";
 import { TrendingUp, Target, Award, BookOpen, Code, Users, Lightbulb, FileText, Calendar, Download } from "lucide-react";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, Cell } from "recharts";
 
