@@ -21,15 +21,15 @@ export const getMonthLabel = (monthNumber) => MONTH_LABELS[monthNumber - 1] || "
 export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
   const startLabel = getMonthLabel(startMonth);
   const endLabel = getMonthLabel(endMonth);
-  
+
   if (startYear === endYear && startMonth === endMonth) {
     return `${startYear}. ${startLabel}`;
   }
-  
+
   if (startYear === endYear) {
     return `${startYear}. ${startLabel} - ${endLabel}`;
   }
-  
+
   return `${startYear}. ${startLabel} - ${endYear}. ${endLabel}`;
 };
 
@@ -125,7 +125,7 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
     return [];
   }
 
-  const availableActivityTypes = activityTypes.filter(activityType => 
+  const availableActivityTypes = activityTypes.filter(activityType =>
     jobData[activityType] && Array.isArray(jobData[activityType]) && jobData[activityType].length > 0
   );
 

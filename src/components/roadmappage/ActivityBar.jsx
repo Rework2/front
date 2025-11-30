@@ -7,6 +7,7 @@ import { formatPeriod } from "./utils";
  * @param {Set} matchingTagSet - 매칭된 태그 Set
  */
 export function ActivityBar({ activity, activityType, matchingTagSet }) {
+  console.log("📊 ActivityBar received:", activity);
   const hasMatchingTag = activity.tags.some((tag) => matchingTagSet.has(tag));
 
   return (

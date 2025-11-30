@@ -48,13 +48,43 @@ export function RoadmapPage() {
    * preferredActivities에 따라 activityTypes 필터링
    * @returns {Array} 필터링된 활동 타입 배열
    */
+  const getCurrentUserId = () => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        return user.id;
+      }
+    } catch (e) {
+      console.error("Failed to get user ID:", e);
+    }
+    return null;
+  };
+
   const getInitialActivityTypes = () => {
+    let types = DEFAULT_ACTIVITY_TYPES;
+
+    // 저장된 커스텀 타입 로드
+    try {
+      const userId = getCurrentUserId();
+      const key = userId ? `custom_activity_types_${userId}` : "custom_activity_types";
+      const savedTypes = localStorage.getItem(key);
+      if (savedTypes) {
+        const parsed = JSON.parse(savedTypes);
+        types = [...types, ...parsed];
+      }
+    } catch (e) {
+      console.error("Failed to load custom activity types:", e);
+    }
+
     if (preferredActivities.length > 0) {
-      return DEFAULT_ACTIVITY_TYPES.filter((type) =>
-        preferredActivities.includes(type.id)
+      // 선호 활동이 있으면 해당 활동 + 커스텀 활동 포함
+      const preferredSet = new Set(preferredActivities);
+      return types.filter((type) =>
+        preferredSet.has(type.id) || !DEFAULT_ACTIVITY_TYPES.some(dt => dt.id === type.id)
       );
     }
-    return DEFAULT_ACTIVITY_TYPES;
+    return types;
   };
 
   /**
@@ -63,7 +93,7 @@ export function RoadmapPage() {
    */
   const getInitialMonthRange = () => {
     const currentMonth = new Date().getMonth() + 1;
-    
+
     switch (preparationPeriod) {
       case "3months":
         return {
@@ -123,6 +153,7 @@ export function RoadmapPage() {
       try {
         setLoading(true);
         let data = await roadmapApi.getRoadmap();
+        console.log("🗺️ RoadmapPage Fetched Data:", data);
 
         const onboardingData = localStorage.getItem("rework_onboarding");
         let shouldInitialize = false;
@@ -141,15 +172,15 @@ export function RoadmapPage() {
               const existingTypes = new Set(data.map(d => d.type || d.typeId));
               const careerKey = mapTargetJobToCareerKey(targetJob);
               const expectedTypes = careerKey && careerData[careerKey]
-                ? userPreferredActivities.filter(type => 
-                    careerData[careerKey][type] && 
-                    Array.isArray(careerData[careerKey][type]) && 
-                    careerData[careerKey][type].length > 0
-                  )
+                ? userPreferredActivities.filter(type =>
+                  careerData[careerKey][type] &&
+                  Array.isArray(careerData[careerKey][type]) &&
+                  careerData[careerKey][type].length > 0
+                )
                 : [];
 
               const missingTypes = expectedTypes.filter(type => !existingTypes.has(type));
-              
+
               if (missingTypes.length > 0 || existingTypes.size < expectedTypes.length) {
                 shouldInitialize = true;
               }
@@ -257,10 +288,10 @@ export function RoadmapPage() {
       .map((type) => {
         const typeActivities = activities
           .filter((activity) => activity.typeId === type.id || activity.type === type.id)
-          .filter((activity) => 
+          .filter((activity) =>
             activity.startYear <= selectedYear && activity.endYear >= selectedYear
           )
-          .filter((activity) => 
+          .filter((activity) =>
             activity.startMonth <= monthRange.end && activity.endMonth >= monthRange.start
           )
           .map((activity) => {
@@ -363,7 +394,14 @@ export function RoadmapPage() {
       color,
     };
 
-    setActivityTypes((prev) => [...prev, newType]);
+    setActivityTypes((prev) => {
+      const updated = [...prev, newType];
+      // 사용자별 커스텀 활동 타입 저장
+      const userId = getCurrentUserId();
+      const key = userId ? `custom_activity_types_${userId}` : "custom_activity_types";
+      localStorage.setItem(key, JSON.stringify(updated.filter(t => !DEFAULT_ACTIVITY_TYPES.some(dt => dt.id === t.id))));
+      return updated;
+    });
     setSelectedActivityTypes((prev) => [...prev, newType.id]);
     setNewActivity((prev) => ({ ...prev, typeId: newType.id }));
     setNewTypeName("");
@@ -413,6 +451,7 @@ export function RoadmapPage() {
       startMonth,
       endYear,
       endMonth,
+      isUserCreated: true,
     };
 
     try {
@@ -443,12 +482,12 @@ export function RoadmapPage() {
    * 선택된 태그를 Set으로 변환 (빠른 조회를 위해)
    */
   const matchingTagSet = useMemo(() => new Set(selectedTags), [selectedTags]);
-  
+
   /**
    * 연도 증가
    */
   const incrementYear = () => setSelectedYear((prev) => prev + 1);
-  
+
   /**
    * 연도 감소
    */
