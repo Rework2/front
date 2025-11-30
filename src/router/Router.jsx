@@ -7,7 +7,7 @@ import { OnboardingPage } from "../pages/OnboardingPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { RoadmapPage } from "../pages/RoadmapPage";
 import ActivityPage from "../pages/ActivePage";
-import { GrowthInsightDashboard } from "../components/Layout/GrowthInsightDashboard";
+import InsightPage from "../pages/InsightPage";
 import { DashboardLayout } from "../components/Layout/DashboardLayout";
 
 export const Router = createBrowserRouter([
@@ -45,7 +45,7 @@ export const Router = createBrowserRouter([
             },
             {
                 path: "/growth",
-                element: <DashboardLayout currentPage="growth"><GrowthInsightDashboard /></DashboardLayout>,
+                element: <DashboardLayout currentPage="growth"><InsightPage /></DashboardLayout>,
             },
         ],
     },

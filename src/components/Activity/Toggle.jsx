@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import styled, { css } from "styled-components";
 
-const Toggle = ({ value, onChange, options = [] }) => {
+const Toggle = ({ value, onChange, options=[ ] }) => {
     const count = options.length;
     const isControlled = typeof value === "number";
     const [inner, setInner] = useState(0);

@@ -23,6 +23,10 @@ const Sidebar = styled.aside`
   flex-shrink: 0;
   border-right: 1px solid #E5E7EB;
   background: ${props => props.theme.colors.white};
+
+  @media print {
+    display: none;
+  }
 `;
 
 const SidebarContent = styled.div`
@@ -147,6 +151,12 @@ const MainContent = styled.main`
   flex: 1;
   min-width: 0;
   overflow-x: hidden;
+
+  @media print {
+    width: 100%;
+    margin: 0;
+    overflow: visible;
+  }
 `;
 
 export function DashboardLayout({ children, currentPage }) {

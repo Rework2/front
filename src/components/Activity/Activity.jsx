@@ -29,6 +29,11 @@ const Activity = forwardRef(({ selectedActivityType = "모든 활동", selectedP
     updateFileCount
   } = useActivity();
 
+  // 부모 컴포넌트에서 addActivity 함수를 호출할 수 있도록 노출
+  useImperativeHandle(ref, () => ({
+    addActivity
+  }));
+
   // 활동 ID로 활동 객체를 빠르게 찾기 위한 맵 생성
   const activityMap = useMemo(() => [
     ...activities.planned,
