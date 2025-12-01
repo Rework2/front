@@ -10,6 +10,7 @@ import {
   Bar,
 } from "recharts";
 
+// 월별 활동 완료 현황 차트 컴포넌트
 const MonthlyCompletionChart = ({ data, onOpenReport }) => {
   // 데이터가 없을 경우 빈 배열 처리
   const chartData = data || [];
@@ -76,7 +77,6 @@ const MonthlyCompletionChart = ({ data, onOpenReport }) => {
 
 export default MonthlyCompletionChart;
 
-// 🎨 styled-components
 const ChartCard = styled.div`
   background: #ffffff;
   border: 1px solid #e9f1ff;

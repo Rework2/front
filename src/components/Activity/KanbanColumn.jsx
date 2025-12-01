@@ -55,6 +55,11 @@ const KanbanColumn = ({
                 });
                 return;
             }
+        } else if (progress === 100) { // To Completed
+            if (!item.files || item.files === 0) {
+                alert("증빙 파일이 있어야 완료 처리할 수 있습니다.");
+                return;
+            }
         }
 
         onChangeProgress(item, progress);

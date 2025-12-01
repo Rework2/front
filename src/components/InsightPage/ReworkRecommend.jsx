@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Brain, Server, Database } from "lucide-react";
 
 const ReworkRecommend = () => {
+  // 추천 목록 데이터 (추후 API 연동 가능)
   const recommendations = [
     {
       title: "Cloud Architecture",
@@ -49,8 +50,6 @@ const ReworkRecommend = () => {
 };
 
 export default ReworkRecommend;
-
-/* ---------------- Styled Components ---------------- */
 
 const Card = styled.div`
   background: linear-gradient(180deg, #2A5EE4 0%, #5F8EF8 100%);

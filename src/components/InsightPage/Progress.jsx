@@ -1,22 +1,10 @@
 import ProgressBar from '@ramonak/react-progress-bar';
 import styled from "styled-components";
 
-const Progress = ({completed}) => {
-//     return(
-//         <>
-//         <p>{completed}%</p>
-//             <ProgressBar
-//             completed={completed}
-//             bgColor="#6887ceff"
-//             baseBgColor="rgba(255,255,255,0.3)"
-//             height="10px"
-//             labelAlignment="outside"
-//             labelColor="#fff"
-//         />
-//         </>
-//     )
-// }
-return (
+// 프로그레스 바 컴포넌트 (진행률 표시)
+const Progress = ({ completed }) => {
+
+    return (
         <ProgressWrapper>
             {/* 오른쪽 표시할 숫자 */}
             <RightPercent>{completed}%</RightPercent>

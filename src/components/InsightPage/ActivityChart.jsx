@@ -10,11 +10,14 @@ import {
   Cell,
 } from "recharts";
 
+// 활동 유형별 분포 차트 컴포넌트
 const ActivityChart = ({ data }) => {
-  // 데이터가 없을 경우 빈 배열 처리
+
+  // 차트 데이터가 없으면 빈 배열로 설정
   const chartData = data || [];
 
-  // 총 활동 개수 계산
+
+  // 전체 활동 개수 합산
   const totalActivities = chartData.reduce((sum, item) => sum + item.value, 0);
 
   return (

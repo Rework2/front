@@ -13,6 +13,7 @@ import {
 // 색상 팔레트 (InsightPage와 동일하게 맞춤)
 const COLORS = ["#2A5EE4", "#5F8EF8", "#E9F1FF", "#94A3B8", "#22C55E", "#F59E0B", "#8884d8"];
 
+// 월별 스킬 성장 추이 차트 컴포넌트
 const GrowthTrendChart = ({ data }) => {
   // 데이터가 없을 경우 빈 배열 처리
   const chartData = data || [];
