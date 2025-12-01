@@ -33,6 +33,11 @@ export function DashboardPage() {
     navigate("/activities");
   };
 
+  // 로드맵 페이지로 이동
+  const handleGoRoadmap = () => {
+    navigate("/roadmap");
+  };
+
   useEffect(() => {
     const fetchData = () => {
       try {
@@ -271,6 +276,7 @@ export function DashboardPage() {
               </p>
               <Button
                 style={{ width: "100%", background: "white", color: "#2A5EE4" }}
+                onClick={handleGoRoadmap}
               >
                 로드맵 최적화
                 <ArrowRight
