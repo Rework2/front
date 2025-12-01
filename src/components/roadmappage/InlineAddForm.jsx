@@ -1,15 +1,7 @@
-/**
- * 인라인 추가 폼 컴포넌트
- * 인라인으로 항목을 추가할 수 있는 간단한 폼 컴포넌트
- * @param {string} value - 입력값
- * @param {string} placeholder - 플레이스홀더 텍스트
- * @param {Function} onChange - 입력값 변경 핸들러
- * @param {Function} onSubmit - 제출 핸들러
- * @param {Function} onCancel - 취소 핸들러
- * @param {string} submitLabel - 제출 버튼 레이블 (기본값: "추가")
- * @param {string} cancelLabel - 취소 버튼 레이블 (기본값: "취소")
- * @param {Component} PlusIcon - 플러스 아이콘 컴포넌트
- */
+import styled from "styled-components";
+
+// 인라인 추가 폼 컴포넌트
+// 인라인으로 항목을 추가할 수 있는 간단한 폼 컴포넌트
 export function InlineAddForm({
   value,
   placeholder,
@@ -21,28 +13,63 @@ export function InlineAddForm({
   PlusIcon,
 }) {
   return (
-    <div className="inline-add-form">
-      {/* 입력 필드 */}
-      <input
-        className="inline-add-form__input"
+    <InlineAddFormContainer>
+      <InlineAddFormInput
         placeholder={placeholder}
         value={value}
         onChange={onChange}
       />
-      {/* 액션 버튼들 */}
-      <div className="inline-add-form__actions">
-        <button className="inline-add-form__button" type="button" onClick={onSubmit}>
+      <InlineAddFormActions>
+        <InlineAddFormButton type="button" onClick={onSubmit}>
           {submitLabel}
-        </button>
-        <button
-          className="inline-add-form__button inline-add-form__button--ghost"
-          type="button"
-          onClick={onCancel}
-        >
+        </InlineAddFormButton>
+        <InlineAddFormButtonGhost type="button" onClick={onCancel}>
           {cancelLabel}
-        </button>
-      </div>
-    </div>
+        </InlineAddFormButtonGhost>
+      </InlineAddFormActions>
+    </InlineAddFormContainer>
   );
 }
+
+const InlineAddFormContainer = styled.div`
+  background: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+`;
+
+const InlineAddFormInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+`;
+
+const InlineAddFormActions = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const InlineAddFormButton = styled.button`
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: #3b82f6;
+  color: white;
+`;
+
+const InlineAddFormButtonGhost = styled(InlineAddFormButton)`
+  background: transparent;
+  color: #64748b;
+
+  &:hover {
+    background: #e2e8f0;
+    color: #334155;
+  }
+`;
 

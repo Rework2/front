@@ -24,10 +24,7 @@ const ChevronLeft = () => <span>‹</span>;
 const ChevronRight = () => <span>›</span>;
 
 export function RoadmapPage() {
-  /**
-   * Onboarding 데이터에서 초기값 가져오기
-   * @returns {Object} 온보딩 폼 데이터
-   */
+  // 온보딩 데이터에서 초기값 가져오기
   const getOnboardingData = () => {
     try {
       const onboardingData = localStorage.getItem("rework_onboarding");
@@ -44,10 +41,7 @@ export function RoadmapPage() {
   const onboardingData = getOnboardingData();
   const { preferredActivities = [], preparationPeriod = "" } = onboardingData;
 
-  /**
-   * preferredActivities에 따라 activityTypes 필터링
-   * @returns {Array} 필터링된 활동 타입 배열
-   */
+  // 현재 사용자 ID 가져오기
   const getCurrentUserId = () => {
     try {
       const userStr = localStorage.getItem('user');
@@ -87,10 +81,7 @@ export function RoadmapPage() {
     return types;
   };
 
-  /**
-   * preparationPeriod에 따라 monthRange 설정
-   * @returns {{start: number, end: number}} 월 범위 객체
-   */
+  // 준비 기간에 따라 월 범위 설정
   const getInitialMonthRange = () => {
     const currentMonth = new Date().getMonth() + 1;
 
@@ -161,9 +152,7 @@ export function RoadmapPage() {
     endMonth: 8,
   });
 
-  /**
-   * 컴포넌트 마운트 시 활동 데이터 로드 및 초기화
-   */
+  // 컴포넌트 마운트 시 활동 데이터 로드 및 초기화
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -263,9 +252,7 @@ export function RoadmapPage() {
     fetchActivities();
   }, []);
 
-  /**
-   * activityTypes 변경 시 newActivity의 typeId 업데이트
-   */
+  // activityTypes 변경 시 newActivity의 typeId 업데이트
   useEffect(() => {
     setNewActivity((prev) => {
       if (activityTypes.length === 0) {
@@ -278,9 +265,7 @@ export function RoadmapPage() {
     });
   }, [activityTypes]);
 
-  /**
-   * selectedYear 변경 시 newActivity의 연도 업데이트
-   */
+  // selectedYear 변경 시 newActivity의 연도 업데이트
   useEffect(() => {
     setNewActivity((prev) => ({
       ...prev,
@@ -289,9 +274,7 @@ export function RoadmapPage() {
     }));
   }, [selectedYear]);
 
-  /**
-   * 선택된 월 범위에 해당하는 월 배열 생성
-   */
+  // 선택된 월 범위에 해당하는 월 배열 생성
   const visibleMonths = useMemo(() => {
     const months = [];
     for (let month = monthRange.start; month <= monthRange.end; month += 1) {
@@ -300,18 +283,14 @@ export function RoadmapPage() {
     return months;
   }, [monthRange]);
 
-  /**
-   * 선택된 활동 타입을 Set으로 변환 (빠른 조회를 위해)
-   */
+  // 선택된 활동 타입을 Set으로 변환 (빠른 조회를 위해)
   const selectedTypeSet = useMemo(
     () => new Set(selectedActivityTypes),
     [selectedActivityTypes]
   );
 
-  /**
-   * 타임라인에 표시할 행 데이터 계산
-   * 선택된 활동 타입, 연도, 월 범위에 맞는 활동들을 필터링하고 위치 정보 추가
-   */
+  // 타임라인에 표시할 행 데이터 계산
+  // 선택된 활동 타입, 연도, 월 범위에 맞는 활동들을 필터링하고 위치 정보 추가
   const timelineRows = useMemo(() => {
     return activityTypes
       .filter((type) => selectedTypeSet.has(type.id))
@@ -351,16 +330,12 @@ export function RoadmapPage() {
       });
   }, [activityTypes, selectedTypeSet, activities, monthRange, visibleMonths, selectedYear]);
 
-  /**
-   * 선택된 태그 제거
-   */
+  // 선택된 태그 제거
   const handleRemoveTag = (tag) => {
     setSelectedTags((prev) => prev.filter((item) => item !== tag));
   };
 
-  /**
-   * 새로운 카테고리 태그 추가
-   */
+  // 새로운 카테고리 태그 추가
   const handleAddCategoryTag = () => {
     const value = newCategoryTag.trim();
     if (!value || selectedTags.includes(value)) {
@@ -371,9 +346,7 @@ export function RoadmapPage() {
     setIsAddingTag(false);
   };
 
-  /**
-   * 월 범위 슬라이더 변경 핸들러
-   */
+  // 월 범위 슬라이더 변경 핸들러
   const handleMonthChange = (key, value) => {
     const numericValue = Number(value);
     setMonthRange((prev) => {
@@ -386,9 +359,7 @@ export function RoadmapPage() {
     });
   };
 
-  /**
-   * 활동 타입 선택 토글
-   */
+  // 활동 타입 선택 토글
   const toggleTypeSelection = (typeId) => {
     setSelectedActivityTypes((prev) => {
       if (prev.includes(typeId)) {
@@ -398,9 +369,7 @@ export function RoadmapPage() {
     });
   };
 
-  /**
-   * 새로운 활동 타입 추가
-   */
+  // 새로운 활동 타입 추가
   const handleAddActivityType = () => {
     const trimmed = newTypeName.trim();
     if (!trimmed) {
@@ -438,9 +407,7 @@ export function RoadmapPage() {
     setIsAddingType(false);
   };
 
-  /**
-   * 새로운 활동 추가 핸들러
-   */
+  // 새로운 활동 추가 핸들러
   const handleAddActivity = async (event) => {
     event.preventDefault();
 
@@ -508,19 +475,13 @@ export function RoadmapPage() {
     }
   };
 
-  /**
-   * 선택된 태그를 Set으로 변환 (빠른 조회를 위해)
-   */
+  // 선택된 태그를 Set으로 변환 (빠른 조회를 위해)
   const matchingTagSet = useMemo(() => new Set(selectedTags), [selectedTags]);
 
-  /**
-   * 연도 증가
-   */
+  // 연도 증가
   const incrementYear = () => setSelectedYear((prev) => prev + 1);
 
-  /**
-   * 연도 감소
-   */
+  // 연도 감소
   const decrementYear = () => setSelectedYear((prev) => prev - 1);
 
   if (loading) {

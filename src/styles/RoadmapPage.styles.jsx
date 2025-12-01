@@ -259,15 +259,15 @@ export const InlineAddFormButton = styled.button`
   border: none;
   background: #3b82f6;
   color: white;
+`;
 
-  &--ghost {
-    background: transparent;
-    color: #64748b;
+export const InlineAddFormButtonGhost = styled(InlineAddFormButton)`
+  background: transparent;
+  color: #64748b;
 
-    &:hover {
-      background: #e2e8f0;
-      color: #334155;
-    }
+  &:hover {
+    background: #e2e8f0;
+    color: #334155;
   }
 `;
 
@@ -373,6 +373,14 @@ export const AddActivityCardLabel = styled.label`
 `;
 
 export const AddActivityCardInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+`;
+
+export const AddActivityCardSelect = styled.select`
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #cbd5e1;
@@ -550,12 +558,6 @@ export const TooltipContent = styled.div`
   transition: opacity 0.2s ease, transform 0.2s ease;
   z-index: 1000;
   margin-bottom: 0.5rem;
-
-  ${ActivityBar}:hover & {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
-  }
 `;
 
 export const TooltipTitle = styled.div`

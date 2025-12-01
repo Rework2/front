@@ -1,15 +1,16 @@
+import styled from "styled-components";
 import { ActivityBar } from "./ActivityBar";
+import * as S from "../../styles/RoadmapPage.styles";
 
 export function TimelineRow({ row, visibleMonths, matchingTagSet }) {
   return (
-    <div
+    <S.TimelineRowContainer
       key={row.type.id}
-      className="timeline-row"
       style={{ gridTemplateColumns: `140px repeat(${visibleMonths.length}, 1fr)` }}
     >
-      <div className="row-label">{row.type.label}</div>
+      <S.RowLabel>{row.type.label}</S.RowLabel>
       {row.activities.length === 0 ? (
-        <div className="timeline-row__placeholder">표시할 활동이 없습니다.</div>
+        <S.TimelineRowPlaceholder>표시할 활동이 없습니다.</S.TimelineRowPlaceholder>
       ) : (
         row.activities.map((activity) => {
           // gridColumn은 start는 포함하고 end는 제외
@@ -20,9 +21,8 @@ export function TimelineRow({ row, visibleMonths, matchingTagSet }) {
           const gridEnd = activity.endIndex + 2 + 1;
 
           return (
-            <div
+            <S.ActivityBarContainer
               key={activity.id}
-              className="activity-bar-container"
               style={{ gridColumn: `${gridStart} / ${gridEnd}` }}
             >
               <ActivityBar
@@ -30,11 +30,11 @@ export function TimelineRow({ row, visibleMonths, matchingTagSet }) {
                 activityType={row.type}
                 matchingTagSet={matchingTagSet}
               />
-            </div>
+            </S.ActivityBarContainer>
           );
         })
       )}
-    </div>
+    </S.TimelineRowContainer>
   );
 }
 

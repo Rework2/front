@@ -1,4 +1,15 @@
+import styled from "styled-components";
 import { MONTH_LABELS } from "./constants";
+import * as S from "../../styles/RoadmapPage.styles";
+
+// AddActivityCardSelect를 S에서 가져오기 위해 별도로 정의
+const AddActivityCardSelect = styled.select`
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+`;
 
 export function AddActivityForm({
   activityTypes,
@@ -9,18 +20,17 @@ export function AddActivityForm({
   XIcon,
 }) {
   return (
-    <div className="add-activity-card">
-      <div className="add-activity-card__header">
+    <S.AddActivityCard>
+      <S.AddActivityCardHeader>
         <h4>새 활동 추가</h4>
-        <button className="icon-button" type="button" onClick={onCancel}>
+        <S.IconButton type="button" onClick={onCancel}>
           {XIcon && <XIcon />}
-        </button>
-      </div>
-      <form onSubmit={onSubmit} className="add-activity-card__form">
-        <div className="add-activity-card__field">
-          <label className="add-activity-card__label">Activity Type</label>
-          <select
-            className="add-activity-card__input"
+        </S.IconButton>
+      </S.AddActivityCardHeader>
+      <S.AddActivityCardForm onSubmit={onSubmit}>
+        <S.AddActivityCardField>
+          <S.AddActivityCardLabel>Activity Type</S.AddActivityCardLabel>
+          <AddActivityCardSelect
             value={newActivity.typeId}
             onChange={(event) =>
               onNewActivityChange({ ...newActivity, typeId: event.target.value })
@@ -31,36 +41,34 @@ export function AddActivityForm({
                 {type.label}
               </option>
             ))}
-          </select>
-        </div>
+          </AddActivityCardSelect>
+        </S.AddActivityCardField>
 
-        <div className="add-activity-card__field">
-          <label className="add-activity-card__label">Title</label>
-          <input
-            className="add-activity-card__input"
+        <S.AddActivityCardField>
+          <S.AddActivityCardLabel>Title</S.AddActivityCardLabel>
+          <S.AddActivityCardInput
             placeholder="활동명을 입력하세요"
             value={newActivity.title}
             onChange={(event) =>
               onNewActivityChange({ ...newActivity, title: event.target.value })
             }
           />
-        </div>
+        </S.AddActivityCardField>
 
-        <div className="add-activity-card__field">
-          <label className="add-activity-card__label">Tags</label>
-          <input
-            className="add-activity-card__input"
+        <S.AddActivityCardField>
+          <S.AddActivityCardLabel>Tags</S.AddActivityCardLabel>
+          <S.AddActivityCardInput
             placeholder="태그를 콤마(,)로 구분하여 입력"
             value={newActivity.tags}
             onChange={(event) =>
               onNewActivityChange({ ...newActivity, tags: event.target.value })
             }
           />
-        </div>
+        </S.AddActivityCardField>
 
-        <div className="add-activity-card__field">
-          <label className="add-activity-card__label">Important</label>
-          <label className="important-checkbox">
+        <S.AddActivityCardField>
+          <S.AddActivityCardLabel>Important</S.AddActivityCardLabel>
+          <S.ImportantCheckbox>
             <input
               type="checkbox"
               checked={newActivity.isImportant}
@@ -72,15 +80,14 @@ export function AddActivityForm({
               }
             />
             <span>중요도가 높은 활동</span>
-          </label>
-        </div>
+          </S.ImportantCheckbox>
+        </S.AddActivityCardField>
 
-        <div className="add-activity-card__field add-activity-card__field--split">
+        <AddActivityCardFieldSplit>
           <div>
-            <label className="add-activity-card__label">Start Year</label>
-            <input
+            <S.AddActivityCardLabel>Start Year</S.AddActivityCardLabel>
+            <S.AddActivityCardInput
               type="number"
-              className="add-activity-card__input"
               value={newActivity.startYear}
               onChange={(event) =>
                 onNewActivityChange({
@@ -93,10 +100,9 @@ export function AddActivityForm({
             />
           </div>
           <div>
-            <label className="add-activity-card__label">End Year</label>
-            <input
+            <S.AddActivityCardLabel>End Year</S.AddActivityCardLabel>
+            <S.AddActivityCardInput
               type="number"
-              className="add-activity-card__input"
               value={newActivity.endYear}
               onChange={(event) =>
                 onNewActivityChange({
@@ -108,13 +114,12 @@ export function AddActivityForm({
               max="2100"
             />
           </div>
-        </div>
+        </AddActivityCardFieldSplit>
 
-        <div className="add-activity-card__field add-activity-card__field--split">
+        <AddActivityCardFieldSplit>
           <div>
-            <label className="add-activity-card__label">Start Month</label>
-            <select
-              className="add-activity-card__input"
+            <S.AddActivityCardLabel>Start Month</S.AddActivityCardLabel>
+            <AddActivityCardSelect
               value={newActivity.startMonth}
               onChange={(event) =>
                 onNewActivityChange({
@@ -128,12 +133,11 @@ export function AddActivityForm({
                   {label}
                 </option>
               ))}
-            </select>
+            </AddActivityCardSelect>
           </div>
           <div>
-            <label className="add-activity-card__label">End Month</label>
-            <select
-              className="add-activity-card__input"
+            <S.AddActivityCardLabel>End Month</S.AddActivityCardLabel>
+            <AddActivityCardSelect
               value={newActivity.endMonth}
               onChange={(event) =>
                 onNewActivityChange({
@@ -147,20 +151,27 @@ export function AddActivityForm({
                   {label}
                 </option>
               ))}
-            </select>
+            </AddActivityCardSelect>
           </div>
-        </div>
+        </AddActivityCardFieldSplit>
 
-        <div className="add-activity-card__actions">
-          <button className="primary-button" type="submit">
-            저장
-          </button>
-          <button className="secondary-button" type="button" onClick={onCancel}>
+        <S.AddActivityCardActions>
+          <S.PrimaryButton type="submit">저장</S.PrimaryButton>
+          <S.SecondaryButton type="button" onClick={onCancel}>
             취소
-          </button>
-        </div>
-      </form>
-    </div>
+          </S.SecondaryButton>
+        </S.AddActivityCardActions>
+      </S.AddActivityCardForm>
+    </S.AddActivityCard>
   );
 }
+
+const AddActivityCardFieldSplit = styled(S.AddActivityCardField)`
+  flex-direction: row;
+  gap: 0.5rem;
+
+  > div {
+    flex: 1;
+  }
+`;
 

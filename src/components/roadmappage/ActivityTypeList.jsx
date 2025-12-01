@@ -1,4 +1,6 @@
+import styled from "styled-components";
 import { InlineAddForm } from "./InlineAddForm";
+import * as S from "../../styles/RoadmapPage.styles";
 
 export function ActivityTypeList({
   activityTypes,
@@ -13,25 +15,22 @@ export function ActivityTypeList({
   PlusIcon,
 }) {
   return (
-    <div className="filter-section">
-      <label className="filter-label">Activity Type</label>
-      <div className="activity-type-list">
+    <S.FilterSection>
+      <S.FilterLabel>Activity Type</S.FilterLabel>
+      <ActivityTypeListContainer>
         {activityTypes.map((type) => (
-          <label key={type.id} className="activity-type-option">
+          <ActivityTypeOption key={type.id}>
             <input
               type="checkbox"
               value={type.id}
               checked={selectedTypeSet.has(type.id)}
               onChange={() => onToggleType(type.id)}
             />
-            <span
-              className="activity-type-option__indicator"
-              style={{ background: type.color }}
-            />
-            <span className="activity-type-option__label">{type.label}</span>
-          </label>
+            <ActivityTypeIndicator style={{ background: type.color }} />
+            <ActivityTypeLabel>{type.label}</ActivityTypeLabel>
+          </ActivityTypeOption>
         ))}
-      </div>
+      </ActivityTypeListContainer>
       {isAddingType ? (
         <InlineAddForm
           value={newTypeName}
@@ -44,16 +43,42 @@ export function ActivityTypeList({
           }}
         />
       ) : (
-        <button
-          className="add-button add-button--inline"
-          type="button"
-          onClick={onStartAddType}
-        >
+        <S.AddButton as="button" type="button" onClick={onStartAddType}>
           {PlusIcon && <PlusIcon />}
           유형 추가
-        </button>
+        </S.AddButton>
       )}
-    </div>
+    </S.FilterSection>
   );
 }
+
+const ActivityTypeListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const ActivityTypeOption = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+
+  input {
+    cursor: pointer;
+  }
+`;
+
+const ActivityTypeIndicator = styled.span`
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.25rem;
+`;
+
+const ActivityTypeLabel = styled.span`
+  font-size: 0.875rem;
+  color: #334155;
+`;
 

@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import { getMonthLabel } from "./utils";
 
 export function MonthRangeSlider({ monthRange, onMonthChange, activeSlider, setActiveSlider }) {
@@ -9,13 +10,12 @@ export function MonthRangeSlider({ monthRange, onMonthChange, activeSlider, setA
   };
 
   return (
-    <div className="month-range">
-      <div className="month-range__sliders">
-        <div className="month-range__track">
-          <div className="month-range__track-fill" style={rangeFillStyle} />
-        </div>
-        <input
-          className="month-slider"
+    <MonthRangeContainer>
+      <MonthRangeSliders>
+        <MonthRangeTrack>
+          <MonthRangeTrackFill style={rangeFillStyle} />
+        </MonthRangeTrack>
+        <MonthSlider
           type="range"
           min="1"
           max="12"
@@ -27,8 +27,7 @@ export function MonthRangeSlider({ monthRange, onMonthChange, activeSlider, setA
           onTouchEnd={() => setActiveSlider(null)}
           style={{ zIndex: activeSlider === "start" ? 4 : 3 }}
         />
-        <input
-          className="month-slider"
+        <MonthSlider
           type="range"
           min="1"
           max="12"
@@ -40,12 +39,71 @@ export function MonthRangeSlider({ monthRange, onMonthChange, activeSlider, setA
           onTouchEnd={() => setActiveSlider(null)}
           style={{ zIndex: activeSlider === "end" ? 4 : 3 }}
         />
-      </div>
-      <div className="month-range__labels">
+      </MonthRangeSliders>
+      <MonthRangeLabels>
         <span>{getMonthLabel(monthRange.start)}</span>
         <span>{getMonthLabel(monthRange.end)}</span>
-      </div>
-    </div>
+      </MonthRangeLabels>
+    </MonthRangeContainer>
   );
 }
+
+const MonthRangeContainer = styled.div`
+  padding: 0 0.5rem;
+`;
+
+const MonthRangeSliders = styled.div`
+  position: relative;
+  height: 1.5rem;
+  margin-bottom: 0.5rem;
+`;
+
+const MonthRangeTrack = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+  transform: translateY(-50%);
+  border-radius: 2px;
+`;
+
+const MonthRangeTrackFill = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #3b82f6;
+  border-radius: 2px;
+`;
+
+const MonthSlider = styled.input`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  -webkit-appearance: none;
+  background: transparent;
+  pointer-events: none;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #3b82f6;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const MonthRangeLabels = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #64748b;
+`;
 

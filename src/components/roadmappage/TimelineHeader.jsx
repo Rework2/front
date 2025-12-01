@@ -1,18 +1,19 @@
+import styled from "styled-components";
 import { getMonthLabel } from "./utils";
+import * as S from "../../styles/RoadmapPage.styles";
 
 export function TimelineHeader({ visibleMonths }) {
   return (
-    <div
-      className="timeline-header"
+    <S.TimelineHeaderContainer
       style={{ gridTemplateColumns: `140px repeat(${visibleMonths.length}, 1fr)` }}
     >
       <div />
       {visibleMonths.map((monthNumber) => (
-        <div key={monthNumber} className="month-column">
+        <S.MonthColumn key={monthNumber}>
           {getMonthLabel(monthNumber)}
-        </div>
+        </S.MonthColumn>
       ))}
-    </div>
+    </S.TimelineHeaderContainer>
   );
 }
 

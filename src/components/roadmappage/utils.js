@@ -2,22 +2,11 @@ import { MONTH_LABELS } from "./constants";
 import careerData from "./careerData.json";
 import openaiFiles from "./openaiFiles.json";
 
-/**
- * 월 번호를 월 레이블로 변환
- * @param {number} monthNumber - 월 번호 (1-12)
- * @returns {string} 월 레이블
- */
+// 월 번호를 월 레이블로 변환
 export const getMonthLabel = (monthNumber) => MONTH_LABELS[monthNumber - 1] || "";
 
-/**
- * 기간을 포맷팅 (시작연도/월 - 종료연도/월)
- * 시작월과 종료월이 같으면 하나의 월만 반환
- * @param {number} startYear - 시작연도
- * @param {number} startMonth - 시작월
- * @param {number} endYear - 종료연도
- * @param {number} endMonth - 종료월
- * @returns {string} 포맷팅된 기간 문자열
- */
+// 기간을 포맷팅 (시작연도/월 - 종료연도/월)
+// 시작월과 종료월이 같으면 하나의 월만 반환
 export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
   const startLabel = getMonthLabel(startMonth);
   const endLabel = getMonthLabel(endMonth);
@@ -33,22 +22,15 @@ export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
   return `${startYear}. ${startLabel} - ${endYear}. ${endLabel}`;
 };
 
-/**
- * 랜덤 파스텔 색상 생성
- * HSL 색상 공간을 사용하여 파스텔 톤의 색상을 생성
- * @returns {string} HSL 색상 문자열
- */
+// 랜덤 파스텔 색상 생성
+// HSL 색상 공간을 사용하여 파스텔 톤의 색상을 생성
 export const generatePastelColor = () => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 85%)`;
 };
 
-/**
- * 문자열을 슬러그로 변환
- * URL이나 ID에 사용할 수 있는 형태로 변환 (소문자, 하이픈 구분)
- * @param {string} value - 변환할 문자열
- * @returns {string} 슬러그 문자열
- */
+// 문자열을 슬러그로 변환
+// URL이나 ID에 사용할 수 있는 형태로 변환 (소문자, 하이픈 구분)
 export const createSlug = (value) => {
   const base = value
     .toLowerCase()
@@ -58,11 +40,7 @@ export const createSlug = (value) => {
   return base || "custom-type";
 };
 
-/**
- * targetJob 문자열을 career JSON 키로 매핑한다.
- * @param {string} targetJob
- * @returns {"frontend"|"backend"|"data_scientist"|"ai_ml_engineer"|null}
- */
+// targetJob 문자열을 career JSON 키로 매핑
 export function mapTargetJobToCareerKey(targetJob) {
   switch (targetJob) {
     case "프론트엔드 개발자":
@@ -80,12 +58,7 @@ export function mapTargetJobToCareerKey(targetJob) {
   }
 }
 
-/**
- * 배열에서 임의의 항목을 1개 반환한다.
- * @template T
- * @param {T[]} arr
- * @returns {T|null}
- */
+// 배열에서 임의의 항목을 1개 반환
 export function getRandomItem(arr) {
   if (!Array.isArray(arr) || arr.length === 0) {
     return null;
@@ -94,26 +67,12 @@ export function getRandomItem(arr) {
   return arr[index];
 }
 
-/**
- * OpenAI 파일 ID 반환
- * @returns {string|null} careerFileId
- */
+// OpenAI 파일 ID 반환
 export function getCareerFileId() {
   return openaiFiles?.careerFileId || null;
 }
 
-/**
- * AI를 사용하여 targetJob과 careerData.json을 기반으로 각 activityType에 맞는 항목을 1개씩 반환한다.
- * @param {string} targetJob - 희망 직무
- * @param {string[]} activityTypes - 선택한 활동 타입 배열 (예: ["competition", "certification", "internship"])
- * @returns {Promise<Array<{id: string, type: string, typeId: string, label: string, startYear?: number, startMonth?: number, endYear?: number, endMonth?: number}>>}
- */
-/**
- * careerData.json을 기반으로 각 activityType별로 1개씩 활동을 선택하여 반환
- * @param {string} targetJob - 희망 직무
- * @param {string[]} activityTypes - 선택한 활동 타입 배열
- * @returns {Promise<Array>} 각 타입별로 1개씩 선택된 활동 배열
- */
+// careerData.json을 기반으로 각 activityType별로 1개씩 활동을 선택하여 반환
 export async function getAIRecommendedActivities(targetJob, activityTypes) {
   if (!activityTypes || activityTypes.length === 0) {
     return [];
@@ -172,9 +131,7 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
     return [];
   }
 
-  /**
-   * 각 activityType별로 직접 1개씩 선택
-   */
+  // 각 activityType별로 직접 1개씩 선택
   const selectOnePerType = () => {
     const currentYear = new Date().getFullYear();
     const result = [];
@@ -209,12 +166,7 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
   return selectOnePerType();
 }
 
-/**
- * 타겟 직무와 활동 타입에 맞는 기본 활동을 생성 (랜덤 선택)
- * @param {string} targetJob - 희망 직무
- * @param {string[]} activityTypes - 활동 타입 배열
- * @returns {Array} 각 타입별로 1개씩 선택된 활동 배열
- */
+// 타겟 직무와 활동 타입에 맞는 기본 활동을 생성 (랜덤 선택)
 export function getDefaultActivitiesForTargetJobWithTypes(targetJob, activityTypes) {
   if (!activityTypes || activityTypes.length === 0) {
     return [];
