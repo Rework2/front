@@ -1,11 +1,12 @@
-// src/components/Insight/AIReportSummary.jsx
 import styled from "styled-components";
 import { Award, BookOpen, LineChart, Target } from "lucide-react";
 
+// AI 리포트 요약 컴포넌트: 활동 수, 파일 수, 성장률, 스킬 레벨 등을 요약해서 보여줌
 const AIReportSummary = ({ summaryData }) => {
   // summaryData가 없으면 기본값 사용 (안전 장치)
   const { completedCount = 0, fileCount = 0, completedRate = 0 } = summaryData || {};
 
+  // 리포트에 표시할 데이터 목록 정의
   const reportData = [
     { icon: <Award color="#22C55E" />, title: "완료 활동 수", value: `${completedCount}개` },
     { icon: <BookOpen color="#2563EB" />, title: "총 증빙 파일", value: `${fileCount}개` },
@@ -32,8 +33,6 @@ const AIReportSummary = ({ summaryData }) => {
 };
 
 export default AIReportSummary;
-
-/* ---------------- styled-components ---------------- */
 
 const ReportCard = styled.div`
   display: flex;

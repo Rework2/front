@@ -84,12 +84,11 @@ const convertRoadmapToActivity = (roadmapActivities) => {
             isAiRecommendation: !roadmapActivity.isUserCreated
         };
 
-        if (endDate < now) {
-            categorized.completed.push(activity);
-        } else if (startDate <= now && endDate >= now) {
-            categorized.inProgress.push(activity);
-        } else {
+        if (startDate > now) {
             categorized.planned.push(activity);
+        } else {
+            // 과거 활동도 포함하여 모두 진행중으로 처리 (완료는 사용자가 직접 처리)
+            categorized.inProgress.push(activity);
         }
     });
 
@@ -237,12 +236,18 @@ const mergeRoadmapAndSaved = (roadmapActivities, savedActivities) => {
             const isCustom = idStr.startsWith("new-") || idStr.startsWith("onboarding-");
             const existsInRoadmap = roadmapIds.has(idStr);
 
+            let targetStatus = status;
+            // 저장된 데이터 중 완료 상태인데 파일이 없는 경우 진행중으로 강제 이동
+            if (status === 'completed' && (!savedItem.files || savedItem.files === 0)) {
+                targetStatus = 'inProgress';
+            }
+
             if (isCustom) {
-                result[status].push(savedItem);
+                result[targetStatus].push(savedItem);
                 savedIds.add(idStr);
             } else if (existsInRoadmap) {
                 const roadmapItem = Object.values(roadmapActivities).flat().find(a => String(a.id) === idStr);
-                result[status].push({ ...roadmapItem, ...savedItem, files: savedItem.files });
+                result[targetStatus].push({ ...roadmapItem, ...savedItem, files: savedItem.files });
                 savedIds.add(idStr);
             }
         });
@@ -453,10 +458,23 @@ export const useActivity = (files) => {
                         ? { ...a, files: Math.max((a.files || 0) + delta, 0) }
                         : a
                 );
+
+            let newPlanned = update(prev.planned);
+            let newInProgress = update(prev.inProgress);
+            let newCompleted = update(prev.completed);
+
+            // 완료된 활동 중 파일이 0개가 된 경우 진행중으로 이동
+            const demotedActivities = newCompleted.filter(a => a.id === activityId && a.files === 0);
+
+            if (demotedActivities.length > 0) {
+                newCompleted = newCompleted.filter(a => a.id !== activityId);
+                newInProgress = [...newInProgress, ...demotedActivities];
+            }
+
             return {
-                planned: update(prev.planned),
-                inProgress: update(prev.inProgress),
-                completed: update(prev.completed),
+                planned: newPlanned,
+                inProgress: newInProgress,
+                completed: newCompleted,
             };
         });
     };

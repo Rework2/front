@@ -1,64 +1,65 @@
 import styled from "styled-components";
 import { X } from "lucide-react";
 
+// 상세 활동 리포트 모달 컴포넌트
 const ReportModal = ({ isOpen, onClose, activities }) => {
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    // 모든 활동을 합치고 날짜순 정렬
-    const allActivities = [
-        ...activities.planned.map(a => ({ ...a, status: '예정' })),
-        ...activities.inProgress.map(a => ({ ...a, status: '진행중' })),
-        ...activities.completed.map(a => ({ ...a, status: '완료' }))
-    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // 모든 활동을 합치고 날짜순 정렬 (최신순)
+  const allActivities = [
+    ...activities.planned.map(a => ({ ...a, status: '예정' })),
+    ...activities.inProgress.map(a => ({ ...a, status: '진행중' })),
+    ...activities.completed.map(a => ({ ...a, status: '완료' }))
+  ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    return (
-        <Overlay onClick={onClose}>
-            <ModalContainer onClick={e => e.stopPropagation()}>
-                <Header>
-                    <Title>상세 활동 리포트</Title>
-                    <CloseButton onClick={onClose}>
-                        <X size={24} />
-                    </CloseButton>
-                </Header>
+  return (
+    <Overlay onClick={onClose}>
+      <ModalContainer onClick={e => e.stopPropagation()}>
+        <Header>
+          <Title>상세 활동 리포트</Title>
+          <CloseButton onClick={onClose}>
+            <X size={24} />
+          </CloseButton>
+        </Header>
 
-                <Content>
-                    <Table>
-                        <thead>
-                            <tr>
-                                <Th>활동명</Th>
-                                <Th>카테고리</Th>
-                                <Th>날짜</Th>
-                                <Th>상태</Th>
-                                <Th>파일</Th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {allActivities.map((activity, index) => (
-                                <tr key={`${activity.id}-${index}`}>
-                                    <Td>{activity.title}</Td>
-                                    <Td><Badge>{activity.tag}</Badge></Td>
-                                    <Td>{activity.date}</Td>
-                                    <Td>
-                                        <StatusBadge $status={activity.status}>
-                                            {activity.status}
-                                        </StatusBadge>
-                                    </Td>
-                                    <Td>{activity.files || 0}개</Td>
-                                </tr>
-                            ))}
-                            {allActivities.length === 0 && (
-                                <tr>
-                                    <Td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
-                                        등록된 활동이 없습니다.
-                                    </Td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </Table>
-                </Content>
-            </ModalContainer>
-        </Overlay>
-    );
+        <Content>
+          <Table>
+            <thead>
+              <tr>
+                <Th>활동명</Th>
+                <Th>카테고리</Th>
+                <Th>날짜</Th>
+                <Th>상태</Th>
+                <Th>파일</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {allActivities.map((activity, index) => (
+                <tr key={`${activity.id}-${index}`}>
+                  <Td>{activity.title}</Td>
+                  <Td><Badge>{activity.tag}</Badge></Td>
+                  <Td>{activity.date}</Td>
+                  <Td>
+                    <StatusBadge $status={activity.status}>
+                      {activity.status}
+                    </StatusBadge>
+                  </Td>
+                  <Td>{activity.files || 0}개</Td>
+                </tr>
+              ))}
+              {allActivities.length === 0 && (
+                <tr>
+                  <Td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
+                    등록된 활동이 없습니다.
+                  </Td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </Content>
+      </ModalContainer>
+    </Overlay>
+  );
 };
 
 export default ReportModal;
@@ -172,22 +173,22 @@ const StatusBadge = styled.span`
   font-weight: 500;
   
   ${({ $status }) => {
-        switch ($status) {
-            case '완료':
-                return `
+    switch ($status) {
+      case '완료':
+        return `
           background-color: #dcfce7;
           color: #166534;
         `;
-            case '진행중':
-                return `
+      case '진행중':
+        return `
           background-color: #dbeafe;
           color: #1e40af;
         `;
-            default:
-                return `
+      default:
+        return `
           background-color: #fef9c3;
           color: #854d0e;
         `;
-        }
-    }}
+    }
+  }}
 `;

@@ -15,7 +15,7 @@ import { TimelineRow } from "../components/roadmappage/TimelineRow";
 import { roadmapApi } from "../api/roadmap";
 import { getAIRecommendedActivities, getDefaultActivitiesForTargetJobWithTypes, mapTargetJobToCareerKey } from "../components/roadmappage/utils";
 import careerData from "../components/roadmappage/careerData.json";
-import "../styles/RoadmapPage.css";
+import * as S from "../styles/RoadmapPage.styles";
 
 const X = () => <span>×</span>;
 const Plus = () => <span>+</span>;
@@ -95,16 +95,32 @@ export function RoadmapPage() {
     const currentMonth = new Date().getMonth() + 1;
 
     switch (preparationPeriod) {
-      case "3months":
-        return {
-          start: currentMonth,
-          end: Math.min(12, currentMonth + 2),
-        };
-      case "6months":
-        return {
-          start: currentMonth,
-          end: Math.min(12, currentMonth + 5),
-        };
+      case "3months": {
+        let end = Math.min(12, currentMonth + 2);
+        let start = currentMonth;
+        // start와 end가 같거나 start가 end보다 크면 조정 (최소 2개월 범위 유지)
+        if (start >= end) {
+          start = Math.max(1, end - 2);
+        }
+        // 최종적으로 start와 end가 같지 않도록 보장
+        if (start === end) {
+          end = Math.min(12, start + 1);
+        }
+        return { start, end };
+      }
+      case "6months": {
+        let end = Math.min(12, currentMonth + 5);
+        let start = currentMonth;
+        // start와 end가 같거나 start가 end보다 크면 조정 (최소 5개월 범위 유지)
+        if (start >= end) {
+          start = Math.max(1, end - 5);
+        }
+        // 최종적으로 start와 end가 같지 않도록 보장
+        if (start === end) {
+          end = Math.min(12, start + 1);
+        }
+        return { start, end };
+      }
       case "12months":
         return { start: 1, end: 12 };
       case "flexible":
@@ -170,14 +186,28 @@ export function RoadmapPage() {
               shouldInitialize = true;
             } else {
               const existingTypes = new Set(data.map(d => d.type || d.typeId));
-              const careerKey = mapTargetJobToCareerKey(targetJob);
-              const expectedTypes = careerKey && careerData[careerKey]
-                ? userPreferredActivities.filter(type =>
-                  careerData[careerKey][type] &&
-                  Array.isArray(careerData[careerKey][type]) &&
-                  careerData[careerKey][type].length > 0
-                )
-                : [];
+              let expectedTypes = [];
+
+              // 풀스택 개발자의 경우 frontend와 backend 데이터를 모두 확인
+              if (targetJob === "풀스택 개발자") {
+                const frontendData = careerData.frontend;
+                const backendData = careerData.backend;
+                expectedTypes = userPreferredActivities.filter(type => {
+                  const frontendList = frontendData?.[type] || [];
+                  const backendList = backendData?.[type] || [];
+                  const combinedList = [...frontendList, ...backendList];
+                  return Array.isArray(combinedList) && combinedList.length > 0;
+                });
+              } else {
+                const careerKey = mapTargetJobToCareerKey(targetJob);
+                expectedTypes = careerKey && careerData[careerKey]
+                  ? userPreferredActivities.filter(type =>
+                    careerData[careerKey][type] &&
+                    Array.isArray(careerData[careerKey][type]) &&
+                    careerData[careerKey][type].length > 0
+                  )
+                  : [];
+              }
 
               const missingTypes = expectedTypes.filter(type => !existingTypes.has(type));
 
@@ -495,26 +525,26 @@ export function RoadmapPage() {
 
   if (loading) {
     return (
-      <div className="roadmap-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <S.RoadmapPageContainer style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <p>로드맵을 불러오는 중입니다...</p>
-      </div>
+      </S.RoadmapPageContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="roadmap-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <S.RoadmapPageContainer style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <p>{error}</p>
-      </div>
+      </S.RoadmapPageContainer>
     );
   }
 
   return (
-    <div className="roadmap-page">
-      <div className="roadmap-page__container">
-        <header className="roadmap-page__header">
-          <h1 className="roadmap-page__title">Portfolio Roadmap</h1>
-          <div className="roadmap-page__sub-header">
+    <S.RoadmapPageContainer>
+      <S.Container>
+        <S.Header>
+          <S.Title>Portfolio Roadmap</S.Title>
+          <S.SubHeader>
             <CategoryTags
               tags={selectedTags}
               onRemoveTag={handleRemoveTag}
@@ -526,7 +556,7 @@ export function RoadmapPage() {
               onDecrement={decrementYear}
               icons={{ Calendar, ChevronLeft, ChevronRight }}
             />
-          </div>
+          </S.SubHeader>
           {isAddingTag ? (
             <InlineAddForm
               value={newCategoryTag}
@@ -539,30 +569,26 @@ export function RoadmapPage() {
               }}
             />
           ) : (
-            <button
-              className="add-button add-button--inline"
-              type="button"
-              onClick={() => setIsAddingTag(true)}
-            >
+            <S.AddButton as="button" type="button" onClick={() => setIsAddingTag(true)}>
               <Plus />
               태그 추가
-            </button>
+            </S.AddButton>
           )}
-        </header>
+        </S.Header>
 
-        <div className="roadmap-page__content-wrapper">
-          <aside className="filter-panel">
-            <h3 className="filter-title">Filter</h3>
+        <S.ContentWrapper>
+          <S.FilterPanel>
+            <S.FilterTitle>Filter</S.FilterTitle>
 
-            <div className="filter-section">
-              <label className="filter-label">Month Range</label>
+            <S.FilterSection>
+              <S.FilterLabel>Month Range</S.FilterLabel>
               <MonthRangeSlider
                 monthRange={monthRange}
                 onMonthChange={handleMonthChange}
                 activeSlider={activeSlider}
                 setActiveSlider={setActiveSlider}
               />
-            </div>
+            </S.FilterSection>
 
             <ActivityTypeList
               activityTypes={activityTypes}
@@ -580,22 +606,18 @@ export function RoadmapPage() {
               PlusIcon={Plus}
             />
 
-            <div className="filter-section">
-              <label className="filter-label">Importance</label>
-              <p className="importance-description">
+            <S.FilterSection>
+              <S.FilterLabel>Importance</S.FilterLabel>
+              <S.ImportanceDescription>
                 중요도가 높은 활동은 타임라인에서 별 아이콘(★)으로 강조됩니다.
-              </p>
-              <button
-                className="add-button add-button--block"
-                type="button"
-                onClick={() => {
-                  setIsAddingActivity((prev) => !prev);
-                }}
-              >
+              </S.ImportanceDescription>
+              <S.AddButtonBlock as="button" type="button" onClick={() => {
+                setIsAddingActivity((prev) => !prev);
+              }}>
                 <Plus />
                 활동 추가
-              </button>
-            </div>
+              </S.AddButtonBlock>
+            </S.FilterSection>
 
             {isAddingActivity && (
               <AddActivityForm
@@ -607,16 +629,16 @@ export function RoadmapPage() {
                 XIcon={X}
               />
             )}
-          </aside>
+          </S.FilterPanel>
 
-          <main className="main-content">
-            <div className="timeline-container">
+          <S.MainContent>
+            <S.TimelineContainer>
               <TimelineHeader visibleMonths={visibleMonths} />
 
               {timelineRows.length === 0 && (
-                <div className="timeline-empty">
+                <S.TimelineEmpty>
                   선택한 조건에 해당하는 활동이 없습니다. 새로운 활동을 추가해보세요.
-                </div>
+                </S.TimelineEmpty>
               )}
 
               {timelineRows.map((row) => (
@@ -627,10 +649,10 @@ export function RoadmapPage() {
                   matchingTagSet={matchingTagSet}
                 />
               ))}
-            </div>
-          </main>
-        </div>
-      </div>
-    </div>
+            </S.TimelineContainer>
+          </S.MainContent>
+        </S.ContentWrapper>
+      </S.Container>
+    </S.RoadmapPageContainer>
   );
 }

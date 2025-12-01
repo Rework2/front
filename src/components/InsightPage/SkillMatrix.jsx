@@ -10,6 +10,7 @@ import {
   Legend,
 } from "recharts";
 
+// 스킬 매트릭스 차트 컴포넌트 (현재 vs 목표 비교)
 const SkillMatrix = ({ data }) => {
   return (
     <RadarWrap>
