@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { formatPeriod } from "./utils";
 import * as S from "../../styles/RoadmapPage.styles";
 
-// 타임라인에 표시되는 활동 바 컴포넌트
 export function ActivityBar({ activity, activityType, matchingTagSet }) {
   console.log("📊 ActivityBar received:", activity);
   const hasMatchingTag = activity.tags.some((tag) => matchingTagSet.has(tag));
@@ -35,9 +34,7 @@ export function ActivityBar({ activity, activityType, matchingTagSet }) {
   );
 }
 
-const TooltipContentStyled = styled(S.TooltipContent)`
-  /* 스타일은 부모에서 상속 */
-`;
+const TooltipContentStyled = styled(S.TooltipContent)``;
 
 const ActivityBarStyled = styled(S.ActivityBar)`
   ${props => props.$matched && `

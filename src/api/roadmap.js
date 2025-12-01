@@ -1,5 +1,5 @@
 // import api from './axiosConfig';
-import { DEFAULT_ACTIVITIES } from '../components/roadmappage/constants';
+import { getCurrentUserId } from '../components/roadmappage/utils';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -17,19 +17,6 @@ const getActivitiesFromStorage = (userId) => {
 const saveActivitiesToStorage = (userId, activities) => {
     const key = userId ? `roadmap_activities_db_${userId}` : "roadmap_activities_db";
     localStorage.setItem(key, JSON.stringify(activities));
-};
-
-const getCurrentUserId = () => {
-    try {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            const user = JSON.parse(userStr);
-            return user.id;
-        }
-    } catch (e) {
-        console.error("Failed to get user ID:", e);
-    }
-    return null;
 };
 
 export const roadmapApi = {

@@ -9,6 +9,18 @@ export function MonthRangeSlider({ monthRange, onMonthChange, activeSlider, setA
     right: `${100 - Math.max(startPercent, endPercent)}%`,
   };
 
+  const labelGap = Math.abs(endPercent - startPercent);
+  const minLabelGap = 12;
+  
+  let startLabelLeft = startPercent;
+  let endLabelLeft = endPercent;
+  
+  if (labelGap < minLabelGap) {
+    const gapDiff = (minLabelGap - labelGap) / 2;
+    startLabelLeft = Math.max(0, startPercent - gapDiff);
+    endLabelLeft = Math.min(100, endPercent + gapDiff);
+  }
+
   return (
     <MonthRangeContainer>
       <MonthRangeSliders>
@@ -41,8 +53,12 @@ export function MonthRangeSlider({ monthRange, onMonthChange, activeSlider, setA
         />
       </MonthRangeSliders>
       <MonthRangeLabels>
-        <span>{getMonthLabel(monthRange.start)}</span>
-        <span>{getMonthLabel(monthRange.end)}</span>
+        <MonthLabel style={{ left: `${startLabelLeft}%`, transform: 'translateX(-50%)' }}>
+          {getMonthLabel(monthRange.start)}
+        </MonthLabel>
+        <MonthLabel style={{ left: `${endLabelLeft}%`, transform: 'translateX(-50%)' }}>
+          {getMonthLabel(monthRange.end)}
+        </MonthLabel>
       </MonthRangeLabels>
     </MonthRangeContainer>
   );
@@ -101,9 +117,16 @@ const MonthSlider = styled.input`
 `;
 
 const MonthRangeLabels = styled.div`
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 1.5rem;
+  margin-top: 0.25rem;
+`;
+
+const MonthLabel = styled.span`
+  position: absolute;
   font-size: 0.75rem;
   color: #64748b;
+  white-space: nowrap;
+  pointer-events: none;
 `;
 

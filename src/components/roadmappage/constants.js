@@ -35,5 +35,3 @@ export const DEFAULT_ACTIVITY_TYPES = [
   { id: "study", label: "스터디/동아리", color: "#C4F1F9" },
 ];
 
-export const DEFAULT_ACTIVITIES = [];
-

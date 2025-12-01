@@ -2,11 +2,8 @@ import { MONTH_LABELS } from "./constants";
 import careerData from "./careerData.json";
 import openaiFiles from "./openaiFiles.json";
 
-// 월 번호를 월 레이블로 변환
 export const getMonthLabel = (monthNumber) => MONTH_LABELS[monthNumber - 1] || "";
 
-// 기간을 포맷팅 (시작연도/월 - 종료연도/월)
-// 시작월과 종료월이 같으면 하나의 월만 반환
 export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
   const startLabel = getMonthLabel(startMonth);
   const endLabel = getMonthLabel(endMonth);
@@ -22,15 +19,11 @@ export const formatPeriod = (startYear, startMonth, endYear, endMonth) => {
   return `${startYear}. ${startLabel} - ${endYear}. ${endLabel}`;
 };
 
-// 랜덤 파스텔 색상 생성
-// HSL 색상 공간을 사용하여 파스텔 톤의 색상을 생성
 export const generatePastelColor = () => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 85%)`;
 };
 
-// 문자열을 슬러그로 변환
-// URL이나 ID에 사용할 수 있는 형태로 변환 (소문자, 하이픈 구분)
 export const createSlug = (value) => {
   const base = value
     .toLowerCase()
@@ -40,7 +33,6 @@ export const createSlug = (value) => {
   return base || "custom-type";
 };
 
-// targetJob 문자열을 career JSON 키로 매핑
 export function mapTargetJobToCareerKey(targetJob) {
   switch (targetJob) {
     case "프론트엔드 개발자":
@@ -58,7 +50,6 @@ export function mapTargetJobToCareerKey(targetJob) {
   }
 }
 
-// 배열에서 임의의 항목을 1개 반환
 export function getRandomItem(arr) {
   if (!Array.isArray(arr) || arr.length === 0) {
     return null;
@@ -67,18 +58,37 @@ export function getRandomItem(arr) {
   return arr[index];
 }
 
-// OpenAI 파일 ID 반환
-export function getCareerFileId() {
-  return openaiFiles?.careerFileId || null;
+export function getCurrentUserId() {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.id;
+    }
+  } catch (e) {
+    console.error("Failed to get user ID:", e);
+  }
+  return null;
 }
 
-// careerData.json을 기반으로 각 activityType별로 1개씩 활동을 선택하여 반환
+export function getOnboardingData() {
+  try {
+    const onboardingData = localStorage.getItem("rework_onboarding");
+    if (onboardingData) {
+      const parsed = JSON.parse(onboardingData);
+      return parsed.formData || {};
+    }
+  } catch (e) {
+    console.error("Failed to parse onboarding data:", e);
+  }
+  return {};
+}
+
 export async function getAIRecommendedActivities(targetJob, activityTypes) {
   if (!activityTypes || activityTypes.length === 0) {
     return [];
   }
 
-  // 풀스택 개발자의 경우 frontend와 backend 데이터를 합침
   let relevantData = {};
   let availableActivityTypes = [];
 
@@ -90,7 +100,6 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
       return [];
     }
 
-    // 각 activityType별로 frontend와 backend 데이터를 합침
     for (const activityType of activityTypes) {
       const frontendList = frontendData?.[activityType] || [];
       const backendList = backendData?.[activityType] || [];
@@ -131,7 +140,6 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
     return [];
   }
 
-  // 각 activityType별로 직접 1개씩 선택
   const selectOnePerType = () => {
     const currentYear = new Date().getFullYear();
     const result = [];
@@ -166,7 +174,6 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
   return selectOnePerType();
 }
 
-// 타겟 직무와 활동 타입에 맞는 기본 활동을 생성 (랜덤 선택)
 export function getDefaultActivitiesForTargetJobWithTypes(targetJob, activityTypes) {
   if (!activityTypes || activityTypes.length === 0) {
     return [];
@@ -175,7 +182,6 @@ export function getDefaultActivitiesForTargetJobWithTypes(targetJob, activityTyp
   const result = [];
   const currentYear = new Date().getFullYear();
 
-  // 풀스택 개발자의 경우 frontend와 backend 데이터를 합침
   if (targetJob === "풀스택 개발자") {
     const frontendData = careerData.frontend;
     const backendData = careerData.backend;

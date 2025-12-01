@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-// 카테고리 태그 컴포넌트
-// 선택된 태그들을 칩 형태로 표시하고 제거할 수 있는 컴포넌트
 export function CategoryTags({ tags, onRemoveTag, XIcon }) {
   return (
     <CategoryTagsContainer>

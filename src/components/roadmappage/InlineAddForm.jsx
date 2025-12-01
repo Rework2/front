@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-// 인라인 추가 폼 컴포넌트
-// 인라인으로 항목을 추가할 수 있는 간단한 폼 컴포넌트
 export function InlineAddForm({
   value,
   placeholder,
