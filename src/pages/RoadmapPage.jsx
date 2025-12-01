@@ -95,16 +95,32 @@ export function RoadmapPage() {
     const currentMonth = new Date().getMonth() + 1;
 
     switch (preparationPeriod) {
-      case "3months":
-        return {
-          start: currentMonth,
-          end: Math.min(12, currentMonth + 2),
-        };
-      case "6months":
-        return {
-          start: currentMonth,
-          end: Math.min(12, currentMonth + 5),
-        };
+      case "3months": {
+        let end = Math.min(12, currentMonth + 2);
+        let start = currentMonth;
+        // start와 end가 같거나 start가 end보다 크면 조정 (최소 2개월 범위 유지)
+        if (start >= end) {
+          start = Math.max(1, end - 2);
+        }
+        // 최종적으로 start와 end가 같지 않도록 보장
+        if (start === end) {
+          end = Math.min(12, start + 1);
+        }
+        return { start, end };
+      }
+      case "6months": {
+        let end = Math.min(12, currentMonth + 5);
+        let start = currentMonth;
+        // start와 end가 같거나 start가 end보다 크면 조정 (최소 5개월 범위 유지)
+        if (start >= end) {
+          start = Math.max(1, end - 5);
+        }
+        // 최종적으로 start와 end가 같지 않도록 보장
+        if (start === end) {
+          end = Math.min(12, start + 1);
+        }
+        return { start, end };
+      }
       case "12months":
         return { start: 1, end: 12 };
       case "flexible":
@@ -170,14 +186,28 @@ export function RoadmapPage() {
               shouldInitialize = true;
             } else {
               const existingTypes = new Set(data.map(d => d.type || d.typeId));
-              const careerKey = mapTargetJobToCareerKey(targetJob);
-              const expectedTypes = careerKey && careerData[careerKey]
-                ? userPreferredActivities.filter(type =>
-                  careerData[careerKey][type] &&
-                  Array.isArray(careerData[careerKey][type]) &&
-                  careerData[careerKey][type].length > 0
-                )
-                : [];
+              let expectedTypes = [];
+
+              // 풀스택 개발자의 경우 frontend와 backend 데이터를 모두 확인
+              if (targetJob === "풀스택 개발자") {
+                const frontendData = careerData.frontend;
+                const backendData = careerData.backend;
+                expectedTypes = userPreferredActivities.filter(type => {
+                  const frontendList = frontendData?.[type] || [];
+                  const backendList = backendData?.[type] || [];
+                  const combinedList = [...frontendList, ...backendList];
+                  return Array.isArray(combinedList) && combinedList.length > 0;
+                });
+              } else {
+                const careerKey = mapTargetJobToCareerKey(targetJob);
+                expectedTypes = careerKey && careerData[careerKey]
+                  ? userPreferredActivities.filter(type =>
+                    careerData[careerKey][type] &&
+                    Array.isArray(careerData[careerKey][type]) &&
+                    careerData[careerKey][type].length > 0
+                  )
+                  : [];
+              }
 
               const missingTypes = expectedTypes.filter(type => !existingTypes.has(type));
 

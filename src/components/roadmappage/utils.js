@@ -115,28 +115,56 @@ export function getCareerFileId() {
  * @returns {Promise<Array>} 각 타입별로 1개씩 선택된 활동 배열
  */
 export async function getAIRecommendedActivities(targetJob, activityTypes) {
-  const careerKey = mapTargetJobToCareerKey(targetJob);
-  if (!careerKey || !activityTypes || activityTypes.length === 0) {
+  if (!activityTypes || activityTypes.length === 0) {
     return [];
   }
 
-  const jobData = careerData[careerKey];
-  if (!jobData) {
-    return [];
-  }
+  // 풀스택 개발자의 경우 frontend와 backend 데이터를 합침
+  let relevantData = {};
+  let availableActivityTypes = [];
 
-  const availableActivityTypes = activityTypes.filter(activityType =>
-    jobData[activityType] && Array.isArray(jobData[activityType]) && jobData[activityType].length > 0
-  );
+  if (targetJob === "풀스택 개발자") {
+    const frontendData = careerData.frontend;
+    const backendData = careerData.backend;
 
-  if (availableActivityTypes.length === 0) {
-    return [];
-  }
+    if (!frontendData && !backendData) {
+      return [];
+    }
 
-  const relevantData = {};
-  for (const activityType of availableActivityTypes) {
-    if (jobData[activityType] && Array.isArray(jobData[activityType])) {
-      relevantData[activityType] = jobData[activityType];
+    // 각 activityType별로 frontend와 backend 데이터를 합침
+    for (const activityType of activityTypes) {
+      const frontendList = frontendData?.[activityType] || [];
+      const backendList = backendData?.[activityType] || [];
+      const combinedList = [...frontendList, ...backendList];
+
+      if (combinedList.length > 0) {
+        relevantData[activityType] = combinedList;
+        availableActivityTypes.push(activityType);
+      }
+    }
+  } else {
+    const careerKey = mapTargetJobToCareerKey(targetJob);
+    if (!careerKey) {
+      return [];
+    }
+
+    const jobData = careerData[careerKey];
+    if (!jobData) {
+      return [];
+    }
+
+    availableActivityTypes = activityTypes.filter(activityType =>
+      jobData[activityType] && Array.isArray(jobData[activityType]) && jobData[activityType].length > 0
+    );
+
+    if (availableActivityTypes.length === 0) {
+      return [];
+    }
+
+    for (const activityType of availableActivityTypes) {
+      if (jobData[activityType] && Array.isArray(jobData[activityType])) {
+        relevantData[activityType] = jobData[activityType];
+      }
     }
   }
 
@@ -188,39 +216,74 @@ export async function getAIRecommendedActivities(targetJob, activityTypes) {
  * @returns {Array} 각 타입별로 1개씩 선택된 활동 배열
  */
 export function getDefaultActivitiesForTargetJobWithTypes(targetJob, activityTypes) {
-  const careerKey = mapTargetJobToCareerKey(targetJob);
-  if (!careerKey || !activityTypes || activityTypes.length === 0) {
-    return [];
-  }
-
-  const jobData = careerData[careerKey];
-  if (!jobData) {
+  if (!activityTypes || activityTypes.length === 0) {
     return [];
   }
 
   const result = [];
   const currentYear = new Date().getFullYear();
 
-  for (const activityType of activityTypes) {
-    const list = jobData[activityType];
-    if (!list || !Array.isArray(list) || list.length === 0) {
-      continue;
+  // 풀스택 개발자의 경우 frontend와 backend 데이터를 합침
+  if (targetJob === "풀스택 개발자") {
+    const frontendData = careerData.frontend;
+    const backendData = careerData.backend;
+
+    for (const activityType of activityTypes) {
+      const frontendList = frontendData?.[activityType] || [];
+      const backendList = backendData?.[activityType] || [];
+      const combinedList = [...frontendList, ...backendList];
+
+      if (combinedList.length === 0) {
+        continue;
+      }
+
+      const picked = getRandomItem(combinedList);
+      if (!picked) continue;
+
+      result.push({
+        id: `${activityType}-${Date.now()}-${Math.random()}`,
+        type: activityType,
+        typeId: activityType,
+        label: picked.label,
+        title: picked.label,
+        startYear: picked.startYear ?? currentYear,
+        startMonth: picked.startMonth ?? 1,
+        endYear: picked.endYear ?? currentYear,
+        endMonth: picked.endMonth ?? 12,
+      });
+    }
+  } else {
+    const careerKey = mapTargetJobToCareerKey(targetJob);
+    if (!careerKey) {
+      return [];
     }
 
-    const picked = getRandomItem(list);
-    if (!picked) continue;
+    const jobData = careerData[careerKey];
+    if (!jobData) {
+      return [];
+    }
 
-    result.push({
-      id: `${activityType}-${Date.now()}-${Math.random()}`,
-      type: activityType,
-      typeId: activityType,
-      label: picked.label,
-      title: picked.label,
-      startYear: picked.startYear ?? currentYear,
-      startMonth: picked.startMonth ?? 1,
-      endYear: picked.endYear ?? currentYear,
-      endMonth: picked.endMonth ?? 12,
-    });
+    for (const activityType of activityTypes) {
+      const list = jobData[activityType];
+      if (!list || !Array.isArray(list) || list.length === 0) {
+        continue;
+      }
+
+      const picked = getRandomItem(list);
+      if (!picked) continue;
+
+      result.push({
+        id: `${activityType}-${Date.now()}-${Math.random()}`,
+        type: activityType,
+        typeId: activityType,
+        label: picked.label,
+        title: picked.label,
+        startYear: picked.startYear ?? currentYear,
+        startMonth: picked.startMonth ?? 1,
+        endYear: picked.endYear ?? currentYear,
+        endMonth: picked.endMonth ?? 12,
+      });
+    }
   }
 
   return result;
