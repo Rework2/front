@@ -21,13 +21,12 @@ export function OnboardingPage() {
   const progress = (step / totalSteps) * 100;
 
   const majors = [
-    "컴퓨터공학", "소프트웨어공학", "정보통신공학", "전자공학",
-    "경영학", "경제학", "디자인", "미디어학", "기타"
+    "컴퓨터공학", "소프트웨어공학", "정보통신공학", "전자공학"
   ];
 
   const targetJobs = [
     "프론트엔드 개발자", "백엔드 개발자", "풀스택 개발자", "데이터 사이언티스트",
-    "AI/ML 엔지니어", "DevOps 엔지니어", "기획자", "디자이너", "마케터"
+    "AI/ML 엔지니어"
   ];
 
   const activities = [
