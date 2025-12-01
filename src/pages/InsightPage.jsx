@@ -73,12 +73,8 @@ const InsightPage = () => {
         (activities.completed.length / (total || 1)) * 100
     );
 
-    const summaryData = {
-        completedCount,
-        fileCount: totalFileCount,
-        completedRate
-    };
 
+    // 리팩토링: summaryData 생성을 completionMap 계산 이후로 이동
     const allActivities = [
         ...activities.planned,
         ...activities.inProgress,
@@ -88,34 +84,39 @@ const InsightPage = () => {
     // (2) 월별 활동 완료 현황 (MonthlyCompletionChart)
     const completionMap = {};
 
-    // 헬퍼 함수: 날짜에서 월 추출 (1~12)
-    const getMonthFromActivity = (activity) => {
-        if (activity.endMonth) return parseInt(activity.endMonth);
-        if (activity.date) {
-            const dateObj = new Date(activity.date);
-            return dateObj.getMonth() + 1;
-        }
-        return null;
+    // 헬퍼 함수: 날짜 문자열에서 월 추출 (1~12)
+    const getMonthFromDateStr = (dateStr) => {
+        if (!dateStr) return null;
+        const dateObj = new Date(dateStr);
+        if (isNaN(dateObj.getTime())) return null;
+        return dateObj.getMonth() + 1;
     };
 
-    // 전체 활동을 순회하며 Total과 Completed 집계
+    // 1. 전체 활동(Total) 집계 - 시작 날짜(date) 기준
     allActivities.forEach(activity => {
-        const month = getMonthFromActivity(activity);
-
+        const month = getMonthFromDateStr(activity.date);
         if (month) {
             const key = `${month}월`;
             if (!completionMap[key]) {
                 completionMap[key] = { month: key, completed: 0, total: 0 };
             }
-
-            // 전체 카운트 증가
             completionMap[key].total += 1;
+        }
+    });
 
-            // 완료된 활동인지 확인하여 완료 카운트 증가
-            const isCompleted = activities.completed.some(a => a.id === activity.id);
-            if (isCompleted) {
-                completionMap[key].completed += 1;
+    // 2. 완료 활동(Completed) 집계 - 완료 날짜(endDate) 기준
+    activities.completed.forEach(activity => {
+        // endDate가 있으면 사용, 없으면 date(시작일) 사용 (구버전 데이터 호환)
+        const targetDate = activity.endDate || activity.date;
+        const month = getMonthFromDateStr(targetDate);
+
+        if (month) {
+            const key = `${month}월`;
+            // 해당 월이 맵에 없으면 생성 (완료만 있고 시작은 다른 달일 수 있음)
+            if (!completionMap[key]) {
+                completionMap[key] = { month: key, completed: 0, total: 0 };
             }
+            completionMap[key].completed += 1;
         }
     });
 
@@ -123,12 +124,29 @@ const InsightPage = () => {
         return parseInt(a.month) - parseInt(b.month);
     });
 
+    // (1.5) 최근 성장률 계산
+    const today = new Date();
+    const currentMonth = today.getMonth() + 1;
+    const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+
+    const currentMonthData = completionMap[`${currentMonth}월`];
+    const lastMonthData = completionMap[`${lastMonth}월`];
+
+    const currentCount = currentMonthData ? currentMonthData.completed : 0;
+    const lastCount = lastMonthData ? lastMonthData.completed : 0;
+
+    let growthRate = 0;
+    // 사용자 요청: (이전달 완료 갯수 * 5)% + (현재달 완료 갯수 * 5)%
+    growthRate = (lastCount * 5) + (currentCount * 5);
+
+
+
     // (3) 월별 카테고리 성장 추이 (GrowthTrendChart)
     // 월별로 각 카테고리의 활동 개수를 집계
     const categoryGrowthMap = {};
 
     allActivities.forEach(activity => {
-        const month = getMonthFromActivity(activity);
+        const month = getMonthFromDateStr(activity.date);
         if (month) {
             const key = `${month}월`;
             if (!categoryGrowthMap[key]) {
@@ -155,8 +173,6 @@ const InsightPage = () => {
     const growthTrendData = Object.values(categoryGrowthMap).sort((a, b) => {
         return parseInt(a.month) - parseInt(b.month);
     });
-    // 데이터가 너무 적으면 기본 데이터라도 보여주기 위해 (선택 사항)
-    // if (growthTrendData.length === 0) ... 
 
     // (3) 활동 유형별 분포 (ActivityChart)
     const categoryMap = {};
@@ -206,6 +222,20 @@ const InsightPage = () => {
     });
 
     const skillMatrixData = Object.values(skillMatrixMap);
+
+    // (6) 평균 스킬 레벨 계산 (카테고리별 총 완료 갯수 / 총 카테고리 갯수)
+    const totalCompletedSkills = skillMatrixData.reduce((sum, item) => sum + item.current, 0);
+    const totalCategories = skillMatrixData.length;
+    const averageSkillLevel = totalCategories > 0 ? (totalCompletedSkills / totalCategories).toFixed(1) : 0;
+
+    // summaryData 정의 (모든 계산이 끝난 후)
+    const summaryData = {
+        completedCount,
+        fileCount: totalFileCount,
+        completedRate,
+        growthRate,
+        averageSkillLevel // 추가된 평균 스킬 레벨
+    };
 
     // (6) 상세 리포트 모달 상태
     const [isReportOpen, setIsReportOpen] = useState(false);

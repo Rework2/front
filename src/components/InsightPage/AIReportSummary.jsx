@@ -3,15 +3,15 @@ import { Award, BookOpen, LineChart, Target } from "lucide-react";
 
 // AI 리포트 요약 컴포넌트: 활동 수, 파일 수, 성장률, 스킬 레벨 등을 요약해서 보여줌
 const AIReportSummary = ({ summaryData }) => {
-  // summaryData가 없으면 기본값 사용 (안전 장치)
-  const { completedCount = 0, fileCount = 0, completedRate = 0 } = summaryData || {};
+  // summaryData가 없으면 기본값 사용
+  const { completedCount = 0, fileCount = 0, completedRate = 0, growthRate = 0, averageSkillLevel = 0 } = summaryData || {};
 
   // 리포트에 표시할 데이터 목록 정의
   const reportData = [
     { icon: <Award color="#22C55E" />, title: "완료 활동 수", value: `${completedCount}개` },
     { icon: <BookOpen color="#2563EB" />, title: "총 증빙 파일", value: `${fileCount}개` },
-    { icon: <LineChart color="#A855F7" />, title: "최근 성장률", value: "+24%" }, // 성장률은 계산 로직이 복잡하므로 일단 고정값 유지 혹은 추후 구현
-    { icon: <Target color="#F59E0B" />, title: "평균 스킬 레벨", value: `${completedRate}점` },
+    { icon: <LineChart color="#A855F7" />, title: "최근 성장률", value: `${growthRate > 0 ? '+' : ''}${growthRate}%` },
+    { icon: <Target color="#F59E0B" />, title: "평균 스킬 레벨", value: `${averageSkillLevel}점` },
   ];
 
   return (

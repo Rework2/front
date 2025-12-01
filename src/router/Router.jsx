@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
 import { LandingPage } from "../pages/LandingPage";
 import { LoginPage } from "../pages/LoginPage";
@@ -46,6 +46,10 @@ export const Router = createBrowserRouter([
             {
                 path: "/growth",
                 element: <DashboardLayout currentPage="growth"><InsightPage /></DashboardLayout>,
+            },
+            {
+                path: "/active",
+                element: <Navigate to="/activities" replace />,
             },
         ],
     },

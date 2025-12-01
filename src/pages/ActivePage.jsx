@@ -1,5 +1,6 @@
 import styled from "styled-components"
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useActivity } from "../hooks/useActivity";
 
 import upload from "../assets/upload.svg";
 import filter from "../assets/filter.svg";
@@ -28,61 +29,89 @@ const ActivePage = () => {
     const [selectedActivityType, setSelectedActivityType] = useState("모든 활동");
     const [selectedPeriod, setSelectedPeriod] = useState("전체 기간");
 
-    // Activity 컴포넌트 제어용
-    const activityRef = useRef();
+    // useActivity 훅 사용
+    const {
+        activities,
+        addActivity,
+        updateActivity,
+        handleDeleteActivity,
+        handleChangeProgress,
+        updateFileCount
+    } = useActivity();
 
-    // 로드맵 데이터에서 필터 옵션 생성
-    const [activityTypeOptions, setActivityTypeOptions] = useState(["모든 활동"]);
-    const [periodOptions, setPeriodOptions] = useState(["전체 기간"]);
+    // 필터 옵션 생성 (activities 변경 시 자동 업데이트)
+    const { activityTypeOptions, periodOptions } = useMemo(() => {
+        const types = new Set(["모든 활동"]);
+        const years = new Set();
 
-    useEffect(() => {
-        const loadFilterOptions = () => {
-            try {
-                const roadmapData = localStorage.getItem("roadmap_activities_db");
-                if (roadmapData) {
-                    const activities = JSON.parse(roadmapData);
+        const allItems = [
+            ...activities.planned,
+            ...activities.inProgress,
+            ...activities.completed
+        ];
 
-                    const activityTypeMap = {
-                        "competition": "공모전/대회",
-                        "certification": "자격증",
-                        "project": "개인/팀 프로젝트",
-                        "extracurricular": "대외활동",
-                        "internship": "인턴십",
-                        "study": "스터디/동아리"
-                    };
-
-                    const types = new Set();
-                    const years = new Set();
-
-                    const userId = getCurrentUserId();
-                    const customTypesKey = userId ? `custom_activity_types_${userId}` : "custom_activity_types";
-                    const customTypesStr = localStorage.getItem(customTypesKey);
-                    if (customTypesStr) {
-                        const customTypes = JSON.parse(customTypesStr);
-                        customTypes.forEach(t => types.add(t.label));
-                    }
-
-                    activities.forEach(activity => {
-                        const tag = activityTypeMap[activity.type] || activity.type;
-                        types.add(tag);
-                        if (activity.startYear) years.add(activity.startYear);
-                        if (activity.endYear) years.add(activity.endYear);
-                    });
-
-                    setActivityTypeOptions(["모든 활동", ...Array.from(types).sort()]);
-                    setPeriodOptions(["전체 기간", ...Array.from(years).sort((a, b) => b - a).map(y => `${y}년`)]);
-                }
-            } catch (e) {
-                console.error("Failed to load filter options:", e);
+        allItems.forEach(activity => {
+            if (activity.tag) types.add(activity.tag);
+            if (activity.startYear) years.add(activity.startYear);
+            if (activity.endYear) years.add(activity.endYear);
+            // date 필드에서도 연도 추출 (backup)
+            if (activity.date) {
+                const year = parseInt(activity.date.split('-')[0]);
+                if (!isNaN(year)) years.add(year);
             }
+        });
+
+        // 사용자 정의 활동 타입 추가 (localStorage)
+        try {
+            const userId = getCurrentUserId();
+            const customTypesKey = userId ? `custom_activity_types_${userId}` : "custom_activity_types";
+            const customTypesStr = localStorage.getItem(customTypesKey);
+            if (customTypesStr) {
+                const customTypes = JSON.parse(customTypesStr);
+                customTypes.forEach(t => types.add(t.label));
+            }
+        } catch (e) {
+            console.error("Failed to load custom types:", e);
+        }
+
+        const sortedTypes = Array.from(types).filter(t => t !== "모든 활동").sort();
+
+        return {
+            activityTypeOptions: ["모든 활동", ...sortedTypes],
+            periodOptions: ["전체 기간", ...Array.from(years).sort((a, b) => b - a).map(y => `${y}년`)]
+        };
+    }, [activities]);
+
+    // 필터링된 활동 목록 생성
+    const filteredActivities = useMemo(() => {
+        const filterList = (list) => {
+            return list.filter(activity => {
+                // 활동 유형 필터
+                if (selectedActivityType !== "모든 활동" && activity.tag !== selectedActivityType) {
+                    return false;
+                }
+
+                // 기간 필터
+                if (selectedPeriod !== "전체 기간") {
+                    const selectedYear = parseInt(selectedPeriod.replace("년", ""));
+                    const startYear = activity.startYear || parseInt(activity.date?.split('-')[0]);
+                    const endYear = activity.endYear || startYear;
+
+                    if (selectedYear < startYear || selectedYear > endYear) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
         };
 
-        loadFilterOptions();
-
-        // 로드맵 데이터 변경 감지
-        const interval = setInterval(loadFilterOptions, 2000);
-        return () => clearInterval(interval);
-    }, []);
+        return {
+            planned: filterList(activities.planned),
+            inProgress: filterList(activities.inProgress),
+            completed: filterList(activities.completed)
+        };
+    }, [activities, selectedActivityType, selectedPeriod]);
 
     return (
         <PageContainer>
@@ -104,9 +133,7 @@ const ActivePage = () => {
 
                         {/* 새 활동 추가 버튼 컴포넌트 */}
                         <AddActiveBtn
-                            onAdd={(activity) => {
-                                activityRef.current.addActivity(activity);
-                            }}
+                            onAdd={addActivity}
                         />
                     </ADownloadWrap>
                 </ActiveTopWrap>
@@ -128,11 +155,14 @@ const ActivePage = () => {
                 </AFilter>
 
                 <AManageWrap>
-                    {/* 필터 상태를 Activity에 전달 */}
+                    {/* 필터링된 데이터와 핸들러를 Activity에 전달 */}
                     <Activity
-                        ref={activityRef}
-                        selectedActivityType={selectedActivityType}
-                        selectedPeriod={selectedPeriod}
+                        activities={filteredActivities}
+                        allActivities={activities} // useFile 등을 위해 전체 데이터도 전달 (필요 시)
+                        onDeleteActivity={handleDeleteActivity}
+                        onChangeProgress={handleChangeProgress}
+                        onUpdateFileCount={updateFileCount}
+                        onUpdateActivity={updateActivity}
                     />
                 </AManageWrap>
             </Container>

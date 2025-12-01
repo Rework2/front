@@ -17,7 +17,7 @@ const getCurrentUserId = () => {
   return null;
 };
 
-const EditModal = ({ isOpen, onClose, editItem, setEditItem, onSave, onDelete }) => {
+const EditModal = ({ isOpen, onClose, editItem, setEditItem, onSave, onDelete, status }) => {
   const [categories, setCategories] = useState(baseCategories.map(c => c.label));
 
   // 커스텀 카테고리 로드
@@ -83,6 +83,19 @@ const EditModal = ({ isOpen, onClose, editItem, setEditItem, onSave, onDelete })
             }
           />
         </InputGroup>
+
+        {status === 'completed' && (
+          <InputGroup>
+            <label>완료 날짜</label>
+            <input
+              type="date"
+              value={editItem.endDate || ""}
+              onChange={(e) =>
+                setEditItem({ ...editItem, endDate: e.target.value })
+              }
+            />
+          </InputGroup>
+        )}
 
         <ButtonContainer>
           <DeleteButton onClick={onDelete}>삭제</DeleteButton>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Button } from "./StyledComponents";
-import { SettingsDrawer } from "../../pages/SettingsDrawer";
+import { SettingsDrawer } from "./SettingsDrawer";
 import { Brain } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

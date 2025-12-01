@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { SettingsDrawer } from "../../pages/SettingsDrawer";
+import { SettingsDrawer } from "./SettingsDrawer";
 import {
   LayoutDashboard,
   MapPin,

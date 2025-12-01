@@ -56,10 +56,15 @@ const KanbanColumn = ({
                 return;
             }
         } else if (progress === 100) { // To Completed
-            if (!item.files || item.files === 0) {
-                alert("증빙 파일이 있어야 완료 처리할 수 있습니다.");
-                return;
-            }
+            // 완료 날짜 선택 모달 띄우기
+            setDateModal({
+                isOpen: true,
+                item,
+                targetProgress: 100,
+                message: "활동 완료 날짜를 선택해주세요.",
+                newDate: new Date().toISOString().split('T')[0] // 기본값 오늘
+            });
+            return;
         }
 
         onChangeProgress(item, progress);
@@ -71,7 +76,16 @@ const KanbanColumn = ({
     const handleDateSubmit = () => {
         if (!dateModal.newDate) return;
 
-        const updatedItem = { ...dateModal.item, date: dateModal.newDate };
+        let updatedItem = { ...dateModal.item };
+
+        if (dateModal.targetProgress === 100) {
+            // 완료로 이동 시 endDate 설정
+            updatedItem.endDate = dateModal.newDate;
+        } else {
+            // 예정/진행중 이동 시 date(시작일) 변경
+            updatedItem.date = dateModal.newDate;
+        }
+
         onChangeProgress(dateModal.item, dateModal.targetProgress, updatedItem);
 
         setDateModal({ isOpen: false, item: null, targetProgress: 0, message: "", newDate: "" });
@@ -96,7 +110,7 @@ const KanbanColumn = ({
 
                 <TaskList>
                     {items.map(item => (
-                        <TaskCard key={item.id} onClick={() => onEdit(item)}>
+                        <TaskCard key={item.id} onClick={() => onEdit(item, type)}>
                             <TaskTitle>
                                 {item.isAiRecommendation && <AiPrefix>✨ AI 추천</AiPrefix>}
                                 {item.title}
@@ -187,14 +201,16 @@ const KanbanColumn = ({
             {dateModal.isOpen && (
                 <ModalOverlay onClick={() => setDateModal({ ...dateModal, isOpen: false })}>
                     <ModalBox onClick={(e) => e.stopPropagation()}>
-                        <h3 style={{ marginBottom: "16px" }}>날짜 재설정</h3>
+                        <h3 style={{ marginBottom: "16px" }}>
+                            {dateModal.targetProgress === 100 ? "완료 날짜 선택" : "날짜 재설정"}
+                        </h3>
                         <div style={{ marginBottom: "20px", color: "#64748B", fontSize: "14px" }}>
                             {dateModal.message}
                         </div>
 
                         <div style={{ marginBottom: "20px" }}>
                             <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500" }}>
-                                새로운 날짜 선택
+                                {dateModal.targetProgress === 100 ? "완료 날짜" : "새로운 날짜 선택"}
                             </label>
                             <input
                                 type="date"

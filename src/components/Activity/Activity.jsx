@@ -1,6 +1,5 @@
-import { useState, useImperativeHandle, useMemo, forwardRef } from "react";
+import { useState, useMemo } from "react";
 import { useFile } from "../../hooks/useFile";
-import { useActivity } from "../../hooks/useActivity";
 import styled from "styled-components";
 
 import KanbanColumn from "./KanbanColumn";
@@ -14,35 +13,30 @@ import activeYet from "../../assets/activeYet.svg";
 import activeIng from "../../assets/activeIng.svg";
 import activeDone from "../../assets/activeDone.svg";
 
-const Activity = forwardRef(({ selectedActivityType = "모든 활동", selectedPeriod = "전체 기간" }, ref) => {
+const Activity = ({
+  activities, // 필터링된 활동 목록
+  allActivities, // 전체 활동 목록 (파일 매핑용)
+  onDeleteActivity,
+  onChangeProgress,
+  onUpdateFileCount,
+  onUpdateActivity
+}) => {
   // 수정 모달 상태 관리
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
 
-  // 활동 관리 훅 사용
-  const {
-    activities,
-    setActivities,
-    addActivity,
-    handleDeleteActivity,
-    handleChangeProgress,
-    updateFileCount
-  } = useActivity();
-
-  // 부모 컴포넌트에서 addActivity 함수를 호출할 수 있도록 노출
-  useImperativeHandle(ref, () => ({
-    addActivity
-  }));
-
-  // 활동 ID로 활동 객체를 빠르게 찾기 위한 맵 생성
-  const activityMap = useMemo(() => [
-    ...activities.planned,
-    ...activities.inProgress,
-    ...activities.completed,
-  ].reduce((acc, item) => {
-    acc[item.id] = item;
-    return acc;
-  }, {}), [activities]);
+  // 활동 ID로 활동 객체를 빠르게 찾기 위한 맵 생성 (전체 활동 기준)
+  const activityMap = useMemo(() => {
+    if (!allActivities) return {};
+    return [
+      ...allActivities.planned,
+      ...allActivities.inProgress,
+      ...allActivities.completed,
+    ].reduce((acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    }, {});
+  }, [allActivities]);
 
   // 파일 관리 훅 사용
   const {
@@ -59,63 +53,24 @@ const Activity = forwardRef(({ selectedActivityType = "모든 활동", selectedP
     isViewerOpen,
     searchQuery,
     setSearchQuery
-  } = useFile({ activityMap, onFileCountChange: updateFileCount });
-
-
-  // 선택된 필터(활동 유형, 기간)에 따라 활동 목록 필터링
-  const getFilteredActivities = (activityList) => {
-    return activityList.filter(activity => {
-      if (selectedActivityType !== "모든 활동" && activity.tag !== selectedActivityType) {
-        return false;
-      }
-
-      if (selectedPeriod !== "전체 기간") {
-        const year = parseInt(selectedPeriod.replace("년", ""));
-        const activityStartYear = activity.startYear || parseInt(activity.date?.split('-')[0]);
-        const activityEndYear = activity.endYear || activityStartYear;
-
-        if (year < activityStartYear || year > activityEndYear) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  };
-
-  const filteredActivities = useMemo(() => ({
-    planned: getFilteredActivities(activities.planned),
-    inProgress: getFilteredActivities(activities.inProgress),
-    completed: getFilteredActivities(activities.completed)
-  }), [activities, selectedActivityType, selectedPeriod]);
+  } = useFile({ activityMap, onFileCountChange: onUpdateFileCount });
 
   // 활동 수정 모달 열기
-  const openEditModal = (item) => {
-    setEditItem({ ...item });
+  const openEditModal = (item, status) => {
+    setEditItem({ ...item, status }); // status를 item에 포함시키거나 별도 state로 관리
     setIsEditOpen(true);
   };
 
   // 활동 수정 저장
   const saveEdit = () => {
     if (!editItem) return;
-
-    setActivities((prev) => {
-      const update = (list) =>
-        list.map((a) => (a.id === editItem.id ? editItem : a));
-
-      return {
-        planned: update(prev.planned),
-        inProgress: update(prev.inProgress),
-        completed: update(prev.completed),
-      };
-    });
-
+    onUpdateActivity(editItem);
     setIsEditOpen(false);
   };
 
   // 활동 삭제
-  const onDeleteActivity = () => {
-    handleDeleteActivity(editItem, setIsEditOpen);
+  const onDelete = () => {
+    onDeleteActivity(editItem, setIsEditOpen);
   };
 
   return (
@@ -127,31 +82,31 @@ const Activity = forwardRef(({ selectedActivityType = "모든 활동", selectedP
               <KanbanColumn
                 title="예정"
                 icon={activeYet}
-                items={filteredActivities.planned}
+                items={activities.planned}
                 type="planned"
                 onEdit={openEditModal}
-                onChangeProgress={handleChangeProgress}
+                onChangeProgress={onChangeProgress}
               />
               <KanbanColumn
                 title="진행 중"
                 icon={activeIng}
-                items={filteredActivities.inProgress}
+                items={activities.inProgress}
                 type="progress"
                 onEdit={openEditModal}
-                onChangeProgress={handleChangeProgress}
+                onChangeProgress={onChangeProgress}
               />
               <KanbanColumn
                 title="완료"
                 icon={activeDone}
-                items={filteredActivities.completed}
+                items={activities.completed}
                 type="completed"
                 onEdit={openEditModal}
-                onChangeProgress={handleChangeProgress}
+                onChangeProgress={onChangeProgress}
               />
             </BoardContainer>
 
             <ActivityStats
-              filteredActivities={filteredActivities}
+              filteredActivities={activities}
               filesCount={files.length}
             />
           </LeftSection>
@@ -163,7 +118,7 @@ const Activity = forwardRef(({ selectedActivityType = "모든 활동", selectedP
             filesByTag={filesByTag}
             onFileClick={openViewer}
             onFileDelete={deleteFile}
-            activities={activities}
+            activities={allActivities} // 사이드바에는 전체 활동 목록 전달
             onUploadComplete={addFile}
             files={files}
             searchQuery={searchQuery}
@@ -182,13 +137,14 @@ const Activity = forwardRef(({ selectedActivityType = "모든 활동", selectedP
             editItem={editItem}
             setEditItem={setEditItem}
             onSave={saveEdit}
-            onDelete={onDeleteActivity}
+            onDelete={onDelete}
+            status={editItem?.status} // 상태 전달
           />
         </MainLayout>
       </Container>
     </PageContainer>
   );
-});
+};
 
 export default Activity;
 

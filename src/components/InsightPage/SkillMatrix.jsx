@@ -31,8 +31,8 @@ const SkillMatrix = ({ data }) => {
               <PolarRadiusAxis
                 angle={90}
                 domain={[0, 'auto']}
-                tick={{ fill: "#64748B", fontSize: 12 }}
-                allowDecimals={false}
+                tick={false}
+                axisLine={false}
               />
               <RadarDesWrap>
                 <Radar

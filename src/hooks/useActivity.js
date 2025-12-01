@@ -479,10 +479,23 @@ export const useActivity = (files) => {
         });
     };
 
+    // 활동 수정
+    const updateActivity = (updatedItem) => {
+        setActivities(prev => {
+            const update = (list) => list.map(a => a.id === updatedItem.id ? updatedItem : a);
+            return {
+                planned: update(prev.planned),
+                inProgress: update(prev.inProgress),
+                completed: update(prev.completed)
+            };
+        });
+    };
+
     return {
         activities,
         setActivities,
         addActivity,
+        updateActivity,
         handleDeleteActivity,
         handleChangeProgress,
         updateFileCount
