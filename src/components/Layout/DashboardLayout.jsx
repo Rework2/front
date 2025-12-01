@@ -208,10 +208,10 @@ export function DashboardLayout({ children, currentPage }) {
           </NavSection>
 
           {/* Settings */}
-          <SettingsSection>
+          <SettingsSection onClick={() => navigate('/onboarding')}>
             <SettingsContainer>
               <SettingsDrawer />
-              <SettingsText>Settings</SettingsText>
+              <SettingsText onClick={() => navigate('/onboarding')}>Settings</SettingsText>
             </SettingsContainer>
           </SettingsSection>
         </SidebarContent>
