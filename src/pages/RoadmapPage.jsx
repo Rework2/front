@@ -134,7 +134,25 @@ export function RoadmapPage() {
   const [error, setError] = useState(null);
 
   const [monthRange, setMonthRange] = useState(initialMonthRange);
-  const [selectedTags, setSelectedTags] = useState(["IT", "프로젝트", "React"]);
+  const [selectedTags, setSelectedTags] = useState(() => {
+    try {
+      const savedTags = localStorage.getItem("roadmap_selected_tags");
+      return savedTags ? JSON.parse(savedTags) : ["IT", "프로젝트", "React"];
+    } catch (e) {
+      console.error("Failed to load selected tags:", e);
+      return ["IT", "프로젝트", "React"];
+    }
+  });
+
+  // selectedTags 변경 시 localStorage에 저장
+  useEffect(() => {
+    try {
+      localStorage.setItem("roadmap_selected_tags", JSON.stringify(selectedTags));
+    } catch (e) {
+      console.error("Failed to save selected tags:", e);
+    }
+  }, [selectedTags]);
+
   const [activeSlider, setActiveSlider] = useState(null);
   const [isAddingType, setIsAddingType] = useState(false);
   const [newTypeName, setNewTypeName] = useState("");
