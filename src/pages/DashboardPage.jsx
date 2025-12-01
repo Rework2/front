@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import * as S from "../styles/DashboardPage.styles";
-import { dashboardApi } from "../api/dashboard";
+import { getDashboardData } from "../utils/dashboardData";
 
 export function DashboardPage() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -34,20 +34,34 @@ export function DashboardPage() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       try {
         setLoading(true);
-        const data = await dashboardApi.getDashboardData();
-        setDashboardData(data);
+        // 비동기 API 호출 흉내 (필요시 제거 가능)
+        setTimeout(() => {
+          const data = getDashboardData();
+          if (data) {
+            setDashboardData(data);
+          } else {
+            setError("데이터를 불러오는데 실패했습니다.");
+          }
+          setLoading(false);
+        }, 300);
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
         setError("데이터를 불러오는데 실패했습니다.");
-      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+
+    // 데이터 변경 감지 (localStorage 변경 시 업데이트)
+    const handleStorageChange = () => {
+      fetchData();
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   if (loading) {
@@ -70,7 +84,7 @@ export function DashboardPage() {
     );
   }
 
-  const { progress, stats, chartData, user, aiInsight } = dashboardData;
+  const { progress, stats, chartData, user, aiInsight, recentActivities } = dashboardData;
   const majorLabel = user?.major || "전공 미설정";
   const jobLabel = user?.targetJob || "희망 직무 미설정";
 
@@ -205,7 +219,37 @@ export function DashboardPage() {
                   />
                 </Button>
               </S.CardHeader>
-              <p style={{ color: "#64748B" }}>활동 목록이 여기에 표시됩니다</p>
+
+              {recentActivities && recentActivities.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {recentActivities.map((activity, index) => (
+                    <div key={activity.id || index} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px',
+                      backgroundColor: '#F8FAFC',
+                      borderRadius: '8px'
+                    }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontWeight: 500, color: '#0F172A' }}>{activity.title}</span>
+                        <span style={{ fontSize: '12px', color: '#64748B' }}>{activity.date} | {activity.tag}</span>
+                      </div>
+                      <span style={{
+                        fontSize: '12px',
+                        padding: '4px 8px',
+                        borderRadius: '999px',
+                        backgroundColor: activity.status === 'completed' ? '#DCFCE7' : activity.status === 'inProgress' ? '#DBEAFE' : '#FEF9C3',
+                        color: activity.status === 'completed' ? '#166534' : activity.status === 'inProgress' ? '#1E40AF' : '#854D0E'
+                      }}>
+                        {activity.statusLabel}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ color: "#64748B", textAlign: 'center', padding: '20px 0' }}>등록된 활동이 없습니다.</p>
+              )}
             </S.Card>
           </S.MainColumn>
 
@@ -261,6 +305,7 @@ export function DashboardPage() {
                   $textColor="#2A5EE4"
                   $hoverBg="#E9F1FF"
                   style={{ width: "100%", justifyContent: "flex-start" }}
+                  onClick={handleGoActivityHub}
                 >
                   <FileText
                     style={{
@@ -277,6 +322,7 @@ export function DashboardPage() {
                   $textColor="#2A5EE4"
                   $hoverBg="#E9F1FF"
                   style={{ width: "100%", justifyContent: "flex-start" }}
+                  onClick={handleGoGrowthInsights}
                 >
                   <Target
                     style={{
