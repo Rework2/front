@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useFile } from "../../hooks/useFile";
+// import { useFile } from "../../hooks/useFile"; // ActivePage로 이동됨
 import styled from "styled-components";
 
 import KanbanColumn from "./KanbanColumn";
@@ -19,26 +19,14 @@ const Activity = ({
   onDeleteActivity,
   onChangeProgress,
   onUpdateFileCount,
-  onUpdateActivity
+  onUpdateActivity,
+  fileProps // ActivePage에서 전달받은 파일 관리 props
 }) => {
   // 수정 모달 상태 관리
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
 
-  // 활동 ID로 활동 객체를 빠르게 찾기 위한 맵 생성 (전체 활동 기준)
-  const activityMap = useMemo(() => {
-    if (!allActivities) return {};
-    return [
-      ...allActivities.planned,
-      ...allActivities.inProgress,
-      ...allActivities.completed,
-    ].reduce((acc, item) => {
-      acc[item.id] = item;
-      return acc;
-    }, {});
-  }, [allActivities]);
-
-  // 파일 관리 훅 사용
+  // 파일 관리 훅 사용 (props로 전달받음)
   const {
     files,
     activeTabIndex,
@@ -53,7 +41,7 @@ const Activity = ({
     isViewerOpen,
     searchQuery,
     setSearchQuery
-  } = useFile({ activityMap, onFileCountChange: onUpdateFileCount });
+  } = fileProps;
 
   // 활동 수정 모달 열기
   const openEditModal = (item, status) => {

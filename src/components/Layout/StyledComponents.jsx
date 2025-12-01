@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-// Common Button Styles
+// Common 버튼
 export const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => !['size', 'variant', 'gradient', 'borderColor', 'textColor', 'hoverBg'].includes(prop),
 })`
@@ -63,7 +63,7 @@ export const Button = styled.button.withConfig({
   }
 `;
 
-// Card Component
+
 export const Card = styled.div.withConfig({
   shouldForwardProp: (prop) => !['bgColor', 'noBorder', 'padding', 'shadow', 'hover'].includes(prop),
 })`
@@ -82,7 +82,6 @@ export const Card = styled.div.withConfig({
   `}
 `;
 
-// Input Component
 export const Input = styled.input.withConfig({
   shouldForwardProp: (prop) => !['error'].includes(prop),
 })`
@@ -106,7 +105,6 @@ export const Input = styled.input.withConfig({
   }
 `;
 
-// Label Component
 export const Label = styled.label`
   display: block;
   font-family: ${props => props.theme.fontFamily};
@@ -115,7 +113,6 @@ export const Label = styled.label`
   margin-bottom: 0.5rem;
 `;
 
-// Badge Component
 export const Badge = styled.span.withConfig({
   shouldForwardProp: (prop) => !['bgColor', 'textColor', 'variant', 'borderColor'].includes(prop),
 })`
@@ -151,7 +148,6 @@ export const ProgressBar = styled.div.withConfig({
   border-radius: ${props => props.theme.borderRadius.full};
 `;
 
-// Container Components
 export const Container = styled.div.withConfig({
   shouldForwardProp: (prop) => !['maxWidth', 'padding'].includes(prop),
 })`
@@ -168,7 +164,6 @@ export const Container = styled.div.withConfig({
   padding: ${props => props.padding || '0 1.5rem'};
 `;
 
-// Section Component
 export const Section = styled.section.withConfig({
   shouldForwardProp: (prop) => !['padding', 'bgColor'].includes(prop),
 })`
@@ -176,7 +171,6 @@ export const Section = styled.section.withConfig({
   background: ${props => props.bgColor || 'transparent'};
 `;
 
-// Flex Container
 export const Flex = styled.div.withConfig({
   shouldForwardProp: (prop) => !['align', 'justify', 'gap', 'direction', 'wrap'].includes(prop),
 })`
@@ -188,7 +182,6 @@ export const Flex = styled.div.withConfig({
   flex-wrap: ${props => props.wrap || 'nowrap'};
 `;
 
-// Grid Container
 export const Grid = styled.div.withConfig({
   shouldForwardProp: (prop) => !['cols', 'mdCols', 'lgCols', 'gap'].includes(prop),
 })`
@@ -205,7 +198,6 @@ export const Grid = styled.div.withConfig({
   }
 `;
 
-// Alert Component
 export const Alert = styled.div.withConfig({
   shouldForwardProp: (prop) => !['variant'].includes(prop),
 })`

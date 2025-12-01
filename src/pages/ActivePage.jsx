@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useActivity } from "../hooks/useActivity";
+import { useFile } from "../hooks/useFile";
 
 import upload from "../assets/upload.svg";
 import filter from "../assets/filter.svg";
@@ -38,6 +39,23 @@ const ActivePage = () => {
         handleChangeProgress,
         updateFileCount
     } = useActivity();
+
+    // 활동 ID로 활동 객체를 빠르게 찾기 위한 맵 생성 (전체 활동 기준)
+    const activityMap = useMemo(() => {
+        if (!activities) return {};
+        return [
+            ...activities.planned,
+            ...activities.inProgress,
+            ...activities.completed,
+        ].reduce((acc, item) => {
+            acc[item.id] = item;
+            return acc;
+        }, {});
+    }, [activities]);
+
+    // 파일 관리 훅 사용 (ActivePage로 이동)
+    const fileProps = useFile({ activityMap, onFileCountChange: updateFileCount });
+    const { filteredFiles } = fileProps;
 
     // 필터 옵션 생성 (activities 변경 시 자동 업데이트)
     const { activityTypeOptions, periodOptions } = useMemo(() => {
@@ -128,7 +146,7 @@ const ActivePage = () => {
                                 <img src={upload} />내보내기
                             </ProofABtn>
 
-                            {openExport && <ExportDropdown />}
+                            {openExport && <ExportDropdown files={filteredFiles} />}
                         </ProofABtnWrap>
 
                         {/* 새 활동 추가 버튼 컴포넌트 */}
@@ -163,6 +181,7 @@ const ActivePage = () => {
                         onChangeProgress={handleChangeProgress}
                         onUpdateFileCount={updateFileCount}
                         onUpdateActivity={updateActivity}
+                        fileProps={fileProps}
                     />
                 </AManageWrap>
             </Container>

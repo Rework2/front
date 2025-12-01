@@ -1,253 +1,19 @@
 import styled from "styled-components";
 import { Button, Card as BaseCard, Badge, Flex, Grid } from "../Layout/StyledComponents";
-import { TrendingUp, Target, Award, BookOpen, Code, Users, Lightbulb, FileText, Calendar, Download } from "lucide-react";
+import { Target, Award, BookOpen, Lightbulb, FileText, Calendar, Download } from "lucide-react";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, Cell } from "recharts";
-
-const PageContainer = styled.div`
-  min-height: 100vh;
-  padding: 2rem;
-  background: ${props => props.theme.colors.backgroundLight};
-`;
-
-const Container = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 1rem;
-`;
-
-const Header = styled.div`
-  margin-bottom: ${props => props.theme.spacing['2xl']};
-  
-  h1 {
-    margin-bottom: ${props => props.theme.spacing.sm};
-    color: ${props => props.theme.colors.text};
-  }
-  
-  p {
-    color: ${props => props.theme.colors.textLight};
-  }
-`;
-
-const SectionWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${props => props.theme.spacing['2xl']};
-  margin-bottom: ${props => props.theme.spacing['2xl']};
-`;
-
-const SectionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${props => props.theme.spacing.lg};
-  
-  h2 {
-    display: flex;
-    align-items: center;
-    gap: ${props => props.theme.spacing.sm};
-    color: ${props => props.theme.colors.text};
-  }
-`;
-
-// Chart Container with proper aspect ratio
-const ChartCard = styled(BaseCard).withConfig({
-  shouldForwardProp: (prop) => !['minHeight', 'height'].includes(prop),
-})`
-  padding: ${props => props.theme.spacing.lg};
-  background: ${props => props.theme.colors.white};
-  border: 1px solid ${props => props.theme.colors.borderLight};
-  border-radius: ${props => props.theme.borderRadius.xl};
-  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const ChartHeader = styled.div`
-  margin-bottom: ${props => props.theme.spacing.lg};
-  
-  h3 {
-    margin-bottom: ${props => props.theme.spacing.xs};
-    color: ${props => props.theme.colors.text};
-  }
-  
-  p {
-    color: ${props => props.theme.colors.textLight};
-    font-size: 0.875rem;
-  }
-`;
-
-// Container for ResponsiveContainer with aspect ratio
-const ChartWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['aspectRatio', 'minHeight'].includes(prop),
-})`
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  aspect-ratio: ${props => props.aspectRatio || '16 / 9'};
-  min-height: ${props => props.minHeight || '300px'};
-  flex: 1;
-  
-  @media (max-width: 1024px) {
-    aspect-ratio: 4 / 3;
-    min-height: 280px;
-  }
-`;
-
-// Metric Cards with hover effects
-const MetricCard = styled(BaseCard)`
-  padding: ${props => props.theme.spacing.lg};
-  background: ${props => props.theme.colors.white};
-  border: 1px solid ${props => props.theme.colors.borderLight};
-  border-radius: ${props => props.theme.borderRadius.lg};
-  box-shadow: 0 8px 16px rgba(16, 24, 40, 0.06);
-  transition: ${props => props.theme.transitions.default};
-  cursor: pointer;
-  
-  &:hover {
-    background: ${props => props.theme.colors.primaryLighter};
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(16, 24, 40, 0.1);
-  }
-`;
-
-const MetricHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: ${props => props.theme.spacing.md};
-`;
-
-const MetricValue = styled.div`
-  font-size: 2rem;
-  font-weight: 600;
-  color: ${props => props.theme.colors.text};
-  margin-bottom: ${props => props.theme.spacing.xs};
-`;
-
-const MetricLabel = styled.div`
-  font-size: 0.875rem;
-  color: ${props => props.theme.colors.textLight};
-`;
-
-const IconWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['bgColor', 'color'].includes(prop),
-})`
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${props => props.bgColor || props.theme.colors.primaryLighter};
-  border-radius: ${props => props.theme.borderRadius.lg};
-  color: ${props => props.color || props.theme.colors.primary};
-`;
-
-// Two-column responsive layout - 66:34 ratio
-const TwoColumnLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  align-items: start;
-  width: 100%;
-  
-  @media (min-width: 1024px) {
-    grid-template-columns: calc(66% - 12px) calc(34% - 12px);
-    gap: 24px;
-  }
-  
-  @media (min-width: 1440px) {
-    grid-template-columns: calc(66% - 16px) calc(34% - 16px);
-    gap: 32px;
-  }
-`;
-
-const MainChartArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-width: 0;
-  width: 100%;
-`;
-
-const SidebarArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-width: 0;
-  width: 100%;
-`;
-
-const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: ${props => props.theme.spacing['2xl']};
-  min-height: 280px;
-  color: ${props => props.theme.colors.textLight};
-  
-  svg {
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: ${props => props.theme.spacing.md};
-    opacity: 0.5;
-  }
-  
-  p {
-    margin-top: ${props => props.theme.spacing.sm};
-    font-size: 0.875rem;
-  }
-`;
-
-// Mock data for charts
-const skillMatrixData = [
-  { skill: '프론트엔드', current: 65, target: 85 },
-  { skill: 'UI/UX', current: 70, target: 90 },
-  { skill: '백엔드', current: 45, target: 70 },
-  { skill: 'DB설계', current: 50, target: 75 },
-  { skill: '협업도구', current: 80, target: 90 },
-  { skill: '문서화', current: 60, target: 80 },
-];
-
-const growthData = [
-  { month: '1월', skills: 3, activities: 5, hours: 40 },
-  { month: '2월', skills: 5, activities: 8, hours: 60 },
-  { month: '3월', skills: 7, activities: 12, hours: 80 },
-  { month: '4월', skills: 10, activities: 15, hours: 95 },
-];
-
-const activityBreakdown = [
-  { name: '프로젝트', value: 35, color: '#2A5EE4' },
-  { name: '스터디', value: 25, color: '#5F8EF8' },
-  { name: '자격증', value: 20, color: '#E9F1FF' },
-  { name: '기타', value: 20, color: '#94A3B8' },
-];
-
-const weeklyProgress = [
-  { day: '월', hours: 6 },
-  { day: '화', hours: 8 },
-  { day: '수', hours: 5 },
-  { day: '목', hours: 9 },
-  { day: '금', hours: 7 },
-  { day: '토', hours: 4 },
-  { day: '일', hours: 3 },
-];
 
 export function GrowthInsightDashboard() {
   return (
     <PageContainer>
       <Container>
+        {/* 페이지 헤더 */}
         <Header>
           <h1>성장 인사이트 대시보드</h1>
           <p>스킬 매트릭스와 성장 리포트를 확인하세요</p>
         </Header>
 
-        {/* Key Metrics */}
+        {/* 주요 지표 (Metrics) 섹션 */}
         <Grid cols="1fr" mdCols="repeat(2, 1fr)" lgCols="repeat(4, 1fr)" gap="1.5rem" style={{ marginBottom: '48px' }}>
           <MetricCard>
             <MetricHeader>
@@ -303,8 +69,8 @@ export function GrowthInsightDashboard() {
         </Grid>
 
         <SectionWrapper>
-          {/* Skill Matrix Section */}
           <div>
+            {/* 스킬 매트릭스 & 성장 리포트 헤더 */}
             <SectionHeader>
               <h2>
                 <Target size={24} />
@@ -317,9 +83,8 @@ export function GrowthInsightDashboard() {
             </SectionHeader>
 
             <TwoColumnLayout>
-              {/* Main Chart Area - 66% */}
               <MainChartArea>
-                {/* Radar Chart */}
+                {/* 레이더 차트: 현재 vs 목표 스킬 */}
                 <ChartCard>
                   <ChartHeader>
                     <h3>현재 vs 목표 스킬</h3>
@@ -365,7 +130,7 @@ export function GrowthInsightDashboard() {
                   </ChartWrapper>
                 </ChartCard>
 
-                {/* Line Chart - Growth Trend */}
+                {/* 라인 차트: 월별 성장 추이 */}
                 <ChartCard>
                   <ChartHeader>
                     <h3>월별 성장 추이</h3>
@@ -412,9 +177,8 @@ export function GrowthInsightDashboard() {
                 </ChartCard>
               </MainChartArea>
 
-              {/* Sidebar Area - 33% */}
               <SidebarArea>
-                {/* Bar Chart - Activity Breakdown */}
+                {/* 바 차트: 활동 유형별 분포 */}
                 <ChartCard>
                   <ChartHeader>
                     <h3>활동 유형별 분포</h3>
@@ -448,7 +212,7 @@ export function GrowthInsightDashboard() {
                   </ChartWrapper>
                 </ChartCard>
 
-                {/* Bar Chart - Weekly Progress */}
+                {/* 바 차트: 주간 학습 시간 */}
                 <ChartCard>
                   <ChartHeader>
                     <h3>주간 학습 시간</h3>
@@ -486,7 +250,7 @@ export function GrowthInsightDashboard() {
             </TwoColumnLayout>
           </div>
 
-          {/* Recent Activities */}
+          {/* 최근 완료 활동 섹션 */}
           <div>
             <SectionHeader>
               <h2>
@@ -526,3 +290,215 @@ export function GrowthInsightDashboard() {
     </PageContainer>
   );
 }
+
+const PageContainer = styled.div`
+  min-height: 100vh;
+  padding: 2rem;
+  background: ${props => props.theme.colors.backgroundLight};
+`;
+
+const Container = styled.div`
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1rem;
+`;
+
+const Header = styled.div`
+  margin-bottom: ${props => props.theme.spacing['2xl']};
+  
+  h1 {
+    margin-bottom: ${props => props.theme.spacing.sm};
+    color: ${props => props.theme.colors.text};
+  }
+  
+  p {
+    color: ${props => props.theme.colors.textLight};
+  }
+`;
+
+const SectionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing['2xl']};
+  margin-bottom: ${props => props.theme.spacing['2xl']};
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${props => props.theme.spacing.lg};
+  
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: ${props => props.theme.spacing.sm};
+    color: ${props => props.theme.colors.text};
+  }
+`;
+
+const ChartCard = styled(BaseCard).withConfig({
+  shouldForwardProp: (prop) => !['minHeight', 'height'].includes(prop),
+})`
+  padding: ${props => props.theme.spacing.lg};
+  background: ${props => props.theme.colors.white};
+  border: 1px solid ${props => props.theme.colors.borderLight};
+  border-radius: ${props => props.theme.borderRadius.xl};
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const ChartHeader = styled.div`
+  margin-bottom: ${props => props.theme.spacing.lg};
+  
+  h3 {
+    margin-bottom: ${props => props.theme.spacing.xs};
+    color: ${props => props.theme.colors.text};
+  }
+  
+  p {
+    color: ${props => props.theme.colors.textLight};
+    font-size: 0.875rem;
+  }
+`;
+
+const ChartWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['aspectRatio', 'minHeight'].includes(prop),
+})`
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: ${props => props.aspectRatio || '16 / 9'};
+  min-height: ${props => props.minHeight || '300px'};
+  flex: 1;
+  
+  @media (max-width: 1024px) {
+    aspect-ratio: 4 / 3;
+    min-height: 280px;
+  }
+`;
+
+const MetricCard = styled(BaseCard)`
+  padding: ${props => props.theme.spacing.lg};
+  background: ${props => props.theme.colors.white};
+  border: 1px solid ${props => props.theme.colors.borderLight};
+  border-radius: ${props => props.theme.borderRadius.lg};
+  box-shadow: 0 8px 16px rgba(16, 24, 40, 0.06);
+  transition: ${props => props.theme.transitions.default};
+  cursor: pointer;
+  
+  &:hover {
+    background: ${props => props.theme.colors.primaryLighter};
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(16, 24, 40, 0.1);
+  }
+`;
+
+const MetricHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: ${props => props.theme.spacing.md};
+`;
+
+const MetricValue = styled.div`
+  font-size: 2rem;
+  font-weight: 600;
+  color: ${props => props.theme.colors.text};
+  margin-bottom: ${props => props.theme.spacing.xs};
+`;
+
+const MetricLabel = styled.div`
+  font-size: 0.875rem;
+  color: ${props => props.theme.colors.textLight};
+`;
+
+const IconWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['bgColor', 'color'].includes(prop),
+})`
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${props => props.bgColor || props.theme.colors.primaryLighter};
+  border-radius: ${props => props.theme.borderRadius.lg};
+  color: ${props => props.color || props.theme.colors.primary};
+`;
+
+const TwoColumnLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: calc(66% - 12px) calc(34% - 12px);
+    gap: 24px;
+  }
+  
+  @media (min-width: 1440px) {
+    grid-template-columns: calc(66% - 16px) calc(34% - 16px);
+    gap: 32px;
+  }
+`;
+
+const MainChartArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+  width: 100%;
+`;
+
+const SidebarArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+  width: 100%;
+`;
+
+// 스킬 매트릭스 데이터
+const skillMatrixData = [
+  { skill: '프론트엔드', current: 65, target: 85 },
+  { skill: 'UI/UX', current: 70, target: 90 },
+  { skill: '백엔드', current: 45, target: 70 },
+  { skill: 'DB설계', current: 50, target: 75 },
+  { skill: '협업도구', current: 80, target: 90 },
+  { skill: '문서화', current: 60, target: 80 },
+];
+
+// 월별 성장 추이 데이터
+const growthData = [
+  { month: '1월', skills: 3, activities: 5, hours: 40 },
+  { month: '2월', skills: 5, activities: 8, hours: 60 },
+  { month: '3월', skills: 7, activities: 12, hours: 80 },
+  { month: '4월', skills: 10, activities: 15, hours: 95 },
+];
+
+// 활동 유형별 분포 데이터
+const activityBreakdown = [
+  { name: '프로젝트', value: 35, color: '#2A5EE4' },
+  { name: '스터디', value: 25, color: '#5F8EF8' },
+  { name: '자격증', value: 20, color: '#E9F1FF' },
+  { name: '기타', value: 20, color: '#94A3B8' },
+];
+
+// 주간 학습 시간 데이터
+const weeklyProgress = [
+  { day: '월', hours: 6 },
+  { day: '화', hours: 8 },
+  { day: '수', hours: 5 },
+  { day: '목', hours: 9 },
+  { day: '금', hours: 7 },
+  { day: '토', hours: 4 },
+  { day: '일', hours: 3 },
+];
+

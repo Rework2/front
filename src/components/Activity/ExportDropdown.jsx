@@ -2,7 +2,7 @@ import styled from "styled-components";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
-const ExportDropdown = () => {
+const ExportDropdown = ({ files }) => {
 
   const getCurrentUserId = () => {
     try {
@@ -55,10 +55,8 @@ const ExportDropdown = () => {
   // ZIP 내보내기
   const handleDownloadZIP = async () => {
     try {
-      const storageKey = getStorageKey("files");
-      const filesMetadata = JSON.parse(localStorage.getItem(storageKey) || "[]");
-
-      if (filesMetadata.length === 0) {
+      // files prop이 없거나 비어있으면 경고
+      if (!files || files.length === 0) {
         alert("다운로드할 파일이 없습니다.");
         return;
       }
@@ -66,7 +64,7 @@ const ExportDropdown = () => {
       const zip = new JSZip();
       let count = 0;
 
-      for (const file of filesMetadata) {
+      for (const file of files) {
         let fileData = file.url || file.data;
 
         // 데이터가 없으면 개별 스토리지에서 확인

@@ -170,10 +170,10 @@ export function DashboardLayout({ children, currentPage }) {
 
   return (
     <LayoutContainer>
-      {/* Sidebar */}
+      {/* 사이드바 */}
       <Sidebar>
         <SidebarContent>
-          {/* Logo */}
+          {/* 로고 */}
           <LogoSection>
             <LogoButton onClick={() => navigate('/')}>
               <LogoIcon>
@@ -186,7 +186,7 @@ export function DashboardLayout({ children, currentPage }) {
             </LogoButton>
           </LogoSection>
 
-          {/* Navigation Menu */}
+          {/* 네비게이션 메뉴 */}
           <NavSection>
             <NavList>
               {menuItems.map((item) => {
@@ -207,7 +207,7 @@ export function DashboardLayout({ children, currentPage }) {
             </NavList>
           </NavSection>
 
-          {/* Settings */}
+          {/* 세팅 */}
           <SettingsSection onClick={() => navigate('/onboarding')}>
             <SettingsContainer>
               <SettingsDrawer />
@@ -217,7 +217,7 @@ export function DashboardLayout({ children, currentPage }) {
         </SidebarContent>
       </Sidebar>
 
-      {/* Main Content */}
+      {/* 메인 */}
       <MainContent>
         {children}
       </MainContent>
